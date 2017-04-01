@@ -3,7 +3,7 @@
 var myclass = "conversation";
 var pagesConfig = {
   containerClass  : "conversation",
-  imageClass      : "[class=_52kr]"
+  imageClass      : "._4yp9"//"._52kr._3_om"
 };
 
 
