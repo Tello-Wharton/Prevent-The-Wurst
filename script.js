@@ -30,10 +30,15 @@ observer.observe(document.body, config);
 
 function watch(target){
     var observer = new MutationObserver(function(mutations) {
+      /*
       mutations.forEach(function(mutation) {
         //console.log(mutation.type);
         console.log("cake");
+        //Stop Sausages Goes Here
       });
+      */
+      var images = target.querySelectorAll('[class=_52kr]');
+
     });
 
     var config = { attributes: true, childList: true, characterData: true, subtree: true  };
