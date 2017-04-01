@@ -1,3 +1,5 @@
+
+
 // Only hardcoded list values work offline
 var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
@@ -6,16 +8,11 @@ var filterG = true;
 var filterN = true;
 var filterS = true;
 
-function replaceImage(captionList, image) {
-    // If captionList contains banned Tags, replace them with danger
-    // Replace image with placeholder image
-}
-
 function checkTag(inputTag) {
     if (filterG) {
             for (i = 0; i < bannedGore.length; i++) {
                 if (inputTag.toLowerCase() == bannedGore[i]) {
-                    inputTag = "Caution, this image may contain gore";
+                    inputTag = "Caution, this image may contain gore or violent imagery";
                 }
             }
     }
@@ -81,14 +78,18 @@ function parseImage(url) {
 function main() {
     // Loads the banned Tags list into a JS array to be used in JS - Only works on hosted server
     console.log("[BANNED TAGS] Loading list");
+
+    /* - JSON DOES NOT WORK FOR NOW INTEGRATED WITH FACEBOOK
     var JSONItems = [];
     $.getJSON("bannedTags.json", function(data){
         JSONItems = data;
         bannedTags = $.map(JSONItems, function(el) { return el; });
     });
     console.log("[BANNED TAGS] Loading complete");
+    */
 
     // Testing the functions with certain Tags
+    //console.log("All tags " + bannedTags);
     console.log(bannedExplicit);
     console.log(bannedGore);
     checkTag("sausage");
