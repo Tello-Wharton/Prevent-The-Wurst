@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Graphic version="2.0" viewHeight="200" viewWidth="200" ATE:version="1.0.0" flm:version="1.0.0" d:using="" xmlns="http://ns.adobe.com/fxg/2008" xmlns:ATE="http://ns.adobe.com/ate/2009" xmlns:d="http://ns.adobe.com/fxg/2008/dt" xmlns:flm="http://ns.adobe.com/flame/2008">
+  <Library/>
+  <Group d:type="layer" d:userLabel="Layer 2"/>
+  <Group d:type="layer" d:userLabel="Layer 1">
+    <Path data="M184.75 15.2 184.75 15.15 15.2 15.15 15.2 184.7 15.25 184.7 15.25 184.75 184.8 184.75 184.8 15.2 184.75 15.2M188.75 11.2 188.8 11.2 188.8 188.85 11.2 188.85 11.2 188.8 11.15 188.8 11.15 11.15 188.75 11.15 188.75 11.2M175.3 175.35 24.75 175.35
+ 24.75 175.25 24.7 175.25 24.7 24.65 175.3 24.65 175.3 175.35">
+      <fill>
+        <SolidColor color="#9CE9EC"/>
+      </fill>
+    </Path>
+    <Path data="M184.75 15.2 184.8 15.2 184.8 184.75 15.25 184.75 15.25 184.7 15.2 184.7 15.2 15.15 184.75 15.15 184.75 15.2M175.3 175.35 175.3 24.65 24.7 24.65 24.7 175.25 24.75 175.25 24.75 175.35 175.3 175.35">
+      <fill>
+        <LinearGradient x="184.8" y="99.95" scaleX="169.6" rotation="180">
+          <GradientEntry ratio="0" color="#57E9EE"/>
+          <GradientEntry ratio="1" color="#9CE9EC"/>
+        </LinearGradient>
+      </fill>
+    </Path>
+    <Path data="M199.95 0.05 200 0.05 200 200 0.05 200 0.05 199.95 0 199.95 0 0 199.95 0 199.95 0.05M188.75 11.2 188.75 11.15 11.15 11.15 11.15 188.8 11.2 188.8 11.2 188.85 188.8 188.85 188.8 11.2 188.75 11.2">
+      <fill>
+        <LinearGradient x="0" y="100" scaleX="200">
+          <GradientEntry ratio="0" color="#57E9EE"/>
+          <GradientEntry ratio="1" color="#9CE9EC"/>
+        </LinearGradient>
+      </fill>
+    </Path>
+  </Group>
+  <Private/>
+</Graphic>
