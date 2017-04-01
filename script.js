@@ -1,14 +1,18 @@
 
 
 var myclass = "conversation";
+var pagesConfig = {
+  containerClass  : "conversation",
+  imageClass      : "[class=_52kr]"
+};
 
-var state = [];
+
 
 var observer = new MutationObserver(function(mutations) {
-    var targets = document.getElementsByClassName('conversation');
+    var targets = document.getElementsByClassName(pagesConfig.containerClass);
 
     for (var x = 0; x < targets.length; x++){
-        if(targets[x].classList.contains('conversation')){
+        if(targets[x].classList.contains(pagesConfig.containerClass)){
             if(targets[x].getAttribute("tracked") !== "true" ){
                 console.log("New chatbox found")
                 watch(targets[x]);
@@ -37,17 +41,8 @@ function watch(target){
         //Stop Sausages Goes Here
       });
       */
-      var x;
-      var y;
-      var images = target.querySelectorAll('[class=_4yp9]');
-      images[0].style.backgroundImage = 'url("www.ryanfuller.co.uk/box.png")';
-      console.log(images[0]);
-      /*for (var i = 0; i < images.length; i++) {
-          console.log(images[i]);
-          x = images[i].width;
-          y = images[i].height;
-          images[i].setAttribute("hidden","true");
-      }*/
+      var images = target.querySelectorAll('[class=_52kr]');
+
     });
 
     var config = { attributes: true, childList: true, characterData: true, subtree: true  };
@@ -62,6 +57,7 @@ function watch(target){
 
 
 // Only hardcoded list values work offline
+
 var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
 var bannedStuff = ["kinks"];
@@ -156,3 +152,15 @@ function main() {
 }
 
 main();
+
+      var x;
+      var y;
+      var images = target.querySelectorAll('[class=_4yp9]');
+      images[0].style.backgroundImage = 'url("www.ryanfuller.co.uk/box.png")';
+      console.log(images[0]);
+      /*for (var i = 0; i < images.length; i++) {
+          console.log(images[i]);
+          x = images[i].width;
+          y = images[i].height;
+          images[i].setAttribute("hidden","true");
+      }*/
