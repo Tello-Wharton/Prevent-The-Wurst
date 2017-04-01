@@ -45,7 +45,7 @@ function watch(target){
       for (var x = 0; x < images.length; x++){
         if(images[x].getAttribute("state") !== "tracked"){
           console.log(images[x]);
-          images[x].style.backgroundImage = 'url("http://www.ryanfuller.co.uk/pop.html")';
+          images[x].style.backgroundImage = 'url("https://raw.githubusercontent.com/Tello-Wharton/Prevent-The-Wurst/master/circle.png")';
           images[x].setAttribute("state","tracked")
         }
       }
