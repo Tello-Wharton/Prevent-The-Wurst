@@ -4,6 +4,7 @@
       );
 
 
+    //Queries the Clarifi API
     function imageChecker(imageURL, callBackFunction){
 
       app.models.predict("e9576d86d2004ed1a38ba0cf39ecb4b1", imageURL).then(
@@ -25,6 +26,9 @@
     }
 
     // Reformat the reponse to a far reduced simpler set
+    // [URL,SafeFactor]
+    // e.g. get safefactor by:
+    // SONResposne["SafeFactor"]
     function reformatResponse(response){
 
       var outputs = response['outputs'];
