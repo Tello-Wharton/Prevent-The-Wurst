@@ -1,3 +1,52 @@
+
+
+var myclass = "conversation";
+
+var state = [];
+
+var observer = new MutationObserver(function(mutations) {
+    var targets = document.getElementsByClassName('conversation');
+
+    for (var x = 0; x < targets.length; x++){
+        if(targets[x].classList.contains('conversation')){
+            if(targets[x].getAttribute("tracked") !== "true" ){
+                console.log("New chatbox found")
+                watch(targets[x]);
+                targets[x].setAttribute("tracked", "true");
+            }
+        }
+    }
+
+});
+
+var config = {
+    attributes: true,
+    childList: true,
+    characterData: true,
+    subtree: true
+};
+
+observer.observe(document.body, config);
+
+function watch(target){
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        //console.log(mutation.type);
+        console.log("cake");
+      });
+    });
+
+    var config = { attributes: true, childList: true, characterData: true, subtree: true  };
+
+    observer.observe(target, config);
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // Only hardcoded list values work offline
 var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
