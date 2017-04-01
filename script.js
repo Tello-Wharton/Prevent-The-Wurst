@@ -37,8 +37,17 @@ function watch(target){
         //Stop Sausages Goes Here
       });
       */
-      var images = target.querySelectorAll('[class=_52kr]');
-
+      var x;
+      var y;
+      var images = target.querySelectorAll('[class=_4yp9]');
+      images[0].style.backgroundImage = 'url("www.ryanfuller.co.uk/box.png")';
+      console.log(images[0]);
+      /*for (var i = 0; i < images.length; i++) {
+          console.log(images[i]);
+          x = images[i].width;
+          y = images[i].height;
+          images[i].setAttribute("hidden","true");
+      }*/
     });
 
     var config = { attributes: true, childList: true, characterData: true, subtree: true  };
