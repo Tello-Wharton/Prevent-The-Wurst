@@ -42,9 +42,12 @@ function watch(target){
       });
       */
       var images = target.querySelectorAll(pagesConfig.imageClass);
-      console.log(images);
       for (var x = 0; x < images.length; x++){
-        images[x].style.backgroundImage = 'url("http://www.ryanfuller.co.uk/pop.html")';
+        if(images[x].getAttribute("state") !== "tracked"){
+          console.log(images[x]);
+          images[x].style.backgroundImage = 'url("http://www.ryanfuller.co.uk/pop.html")';
+          images[x].setAttribute("state","tracked")
+        }
       }
 
     });
