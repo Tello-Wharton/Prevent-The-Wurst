@@ -6277,11 +6277,22 @@ function formatTags(tagString, safetyDec) {
     return formattedString;
 }
 
-var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
+var bannedExplicit = ["sausage", "balls", "melon"];
 var bannedGore = ["blood", "gun", "sword"];
 var filterG = true;
 var filterN = true;
 var filterS = true;
+
+function checkAllTags(array) {
+    blockImage = false;
+    for (i = 0; i < array.length; i++) {
+        if (checkTag(array[i]["name"]) == false){
+            blockImage = true;
+            break;
+        }
+    }
+    return blockImage;
+}
 
 function checkTag(inputTag) {
     var unblock = true;
@@ -6311,9 +6322,8 @@ function checkTag(inputTag) {
     }
 
     // Add to a list of Tags contained in the image, and return the Tag list - DO LATER
-    console.log(inputTag + " " + unblock); // Used for testing - Remove later
     console.log(warning);
-    return unblock, warning;
+    return unblock;
 }
 
 // 1 for Gore, 2 for Explicit, 3 for Stuff [CURRENTLY UNUSED]
