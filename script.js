@@ -6235,7 +6235,7 @@ function watch(target){
           var safetyRating = parseImage(imageURL)[1];
 
           images[x].innerHTML = '<div class="clickable" onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
-          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + formatTags(tags, safetyRating); + "</div>";
+          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + formatTags(tags, safetyRating) + "</div>";
 
           // Check tags here and unblock if needed
 
@@ -6339,8 +6339,8 @@ function parseImage(imageURL) {
 }
 
 function callBackFunction(JSONResponse) {
-    returnSafety(JSONResponse[]);
-    returnTags(JSONResponse[]);
+    returnSafety(JSONResponse);
+    returnTags(JSONResponse);
 
 }
 
