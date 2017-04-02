@@ -50,19 +50,21 @@ function watch(target){
           images[x].style.backgroundImage = 'url("https://raw.githubusercontent.com/Tello-Wharton/Prevent-The-Wurst/master/circle.png")';
           images[x].setAttribute("state","tracked");
           images[x].style.textAlign = "center";
-          images[x].innerHTML = " penis penis";
           var imageURL = images[x].realImage.match(/"([^"]+)"/)[1];
 
           console.log(images[x].realImage);
           console.log(imageURL);
 
-          images[x].innerHTML = '<div onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
+          images[x].innerHTML = '<div class="clickable" onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
+          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block;'>penis penis</div>";
 
           $(images[x].parentNode.parentNode).css("pointer-events","none");
           $(images[x].parentNode).css("pointer-events","none");
           $(images[x]).css("pointer-events","none");
           $(images[x]).children().css("pointer-events", "all");
 
+          //$(images[x]).css("position", "relative");
+          //$(images[x]).css("vertical-align", "middle");
           //$(images[x]).click(function(){ console.log("cake"); });
 
           var cake = parseImage(imageURL);
@@ -148,7 +150,7 @@ function parseImage(imageURL) {
     var warning;
 
     console.log(dataToTransmit);
-    
+
 		$.ajax({
 			url: "/ajax/registervote", // Put in the URL for the server
 			type: "POST",
