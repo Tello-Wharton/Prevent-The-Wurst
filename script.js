@@ -49,7 +49,8 @@ function watch(target){
           images[x].realImage = images[x].style.backgroundImage;
           images[x].style.backgroundImage = 'url("https://raw.githubusercontent.com/Tello-Wharton/Prevent-The-Wurst/master/circle.png")';
           images[x].setAttribute("state","tracked");
-
+          images[x].style.textAlign = "center";
+          images[x].innerHTML = " penis penis";
           var imageURL = images[x].realImage.match(/"([^"]+)"/)[1];
 
           console.log(images[x].realImage);
