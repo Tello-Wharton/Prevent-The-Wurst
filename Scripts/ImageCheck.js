@@ -13,9 +13,9 @@
  * The source tree of this library can be found at
  *   https://github.com/Clarifai/clarifai-javascript
  */
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-"use strict";
+ (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    "use strict";
 
 // rawAsap provides everything we need except exception management.
 var rawAsap = require("./raw");
@@ -27,9 +27,9 @@ var pendingErrors = [];
 var requestErrorThrow = rawAsap.makeRequestCallFromTimer(throwFirstError);
 
 function throwFirstError() {
-    if (pendingErrors.length) {
-        throw pendingErrors.shift();
-    }
+  if (pendingErrors.length) {
+    throw pendingErrors.shift();
+  }
 }
 
 /**
@@ -40,52 +40,52 @@ function throwFirstError() {
  * @param {{call}} task A callable object, typically a function that takes no
  * arguments.
  */
-module.exports = asap;
-function asap(task) {
-    var rawTask;
-    if (freeTasks.length) {
-        rawTask = freeTasks.pop();
-    } else {
-        rawTask = new RawTask();
-    }
-    rawTask.task = task;
-    rawAsap(rawTask);
+ module.exports = asap;
+ function asap(task) {
+  var rawTask;
+  if (freeTasks.length) {
+    rawTask = freeTasks.pop();
+  } else {
+    rawTask = new RawTask();
+  }
+  rawTask.task = task;
+  rawAsap(rawTask);
 }
 
 // We wrap tasks with recyclable task objects.  A task object implements
 // `call`, just like a function.
 function RawTask() {
-    this.task = null;
+  this.task = null;
 }
 
 // The sole purpose of wrapping the task is to catch the exception and recycle
 // the task object after its single use.
 RawTask.prototype.call = function () {
-    try {
-        this.task.call();
-    } catch (error) {
-        if (asap.onerror) {
+  try {
+    this.task.call();
+  } catch (error) {
+    if (asap.onerror) {
             // This hook exists purely for testing purposes.
             // Its name will be periodically randomized to break any code that
             // depends on its existence.
             asap.onerror(error);
-        } else {
+          } else {
             // In a web browser, exceptions are not fatal. However, to avoid
             // slowing down the queue of pending tasks, we rethrow the error in a
             // lower priority turn.
             pendingErrors.push(error);
             requestErrorThrow();
+          }
+        } finally {
+          this.task = null;
+          freeTasks[freeTasks.length] = this;
         }
-    } finally {
-        this.task = null;
-        freeTasks[freeTasks.length] = this;
-    }
-};
+      };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/asap/browser-asap.js","/../node_modules/asap")
+    }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/asap/browser-asap.js","/../node_modules/asap")
 },{"./raw":2,"1YiZ5S":27,"buffer":22}],2:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-"use strict";
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    "use strict";
 
 // Use the fastest means possible to execute a task in its own turn, with
 // priority over other events including IO, animation, reflow, and redraw
@@ -99,15 +99,15 @@ RawTask.prototype.call = function () {
 // call `rawAsap.requestFlush` if an exception is thrown.
 module.exports = rawAsap;
 function rawAsap(task) {
-    if (!queue.length) {
-        requestFlush();
-        flushing = true;
-    }
+  if (!queue.length) {
+    requestFlush();
+    flushing = true;
+  }
     // Equivalent to push, but avoids a function call.
     queue[queue.length] = task;
-}
+  }
 
-var queue = [];
+  var queue = [];
 // Once a flush has been requested, no further calls to `requestFlush` are
 // necessary until the next `flush` completes.
 var flushing = false;
@@ -131,8 +131,8 @@ var capacity = 1024;
 // However, `flush` does not make any arrangements to be called again if an
 // exception is thrown.
 function flush() {
-    while (index < queue.length) {
-        var currentIndex = index;
+  while (index < queue.length) {
+    var currentIndex = index;
         // Advance the index before calling the task. This ensures that we will
         // begin flushing on the next task the task throws an error.
         index = index + 1;
@@ -146,16 +146,16 @@ function flush() {
             // Manually shift all values starting at the index back to the
             // beginning of the queue.
             for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
-                queue[scan] = queue[scan + index];
+              queue[scan] = queue[scan + index];
             }
             queue.length -= index;
             index = 0;
+          }
         }
-    }
-    queue.length = 0;
-    index = 0;
-    flushing = false;
-}
+        queue.length = 0;
+        index = 0;
+        flushing = false;
+      }
 
 // `requestFlush` is implemented using a strategy based on data collected from
 // every available SauceLabs Selenium web driver worker at time of writing.
@@ -182,7 +182,7 @@ var BrowserMutationObserver = scope.MutationObserver || scope.WebKitMutationObse
 // - iPhone Safari 7-7.1
 // - Safari 6-7
 if (typeof BrowserMutationObserver === "function") {
-    requestFlush = makeRequestCallFromMutationObserver(flush);
+  requestFlush = makeRequestCallFromMutationObserver(flush);
 
 // MessageChannels are desirable because they give direct access to the HTML
 // task queue, are implemented in Internet Explorer 10, Safari 5.0-1, and Opera
@@ -212,7 +212,7 @@ if (typeof BrowserMutationObserver === "function") {
 // - iPad Safari 4.3
 // - Lynx 2.8.7
 } else {
-    requestFlush = makeRequestCallFromTimer(flush);
+  requestFlush = makeRequestCallFromTimer(flush);
 }
 
 // `requestFlush` requests that the high priority event queue be flushed as
@@ -225,14 +225,14 @@ rawAsap.requestFlush = requestFlush;
 // To request a high priority event, we induce a mutation observer by toggling
 // the text of a text node between "1" and "-1".
 function makeRequestCallFromMutationObserver(callback) {
-    var toggle = 1;
-    var observer = new BrowserMutationObserver(callback);
-    var node = document.createTextNode("");
-    observer.observe(node, {characterData: true});
-    return function requestCall() {
-        toggle = -toggle;
-        node.data = toggle;
-    };
+  var toggle = 1;
+  var observer = new BrowserMutationObserver(callback);
+  var node = document.createTextNode("");
+  observer.observe(node, {characterData: true});
+  return function requestCall() {
+    toggle = -toggle;
+    node.data = toggle;
+  };
 }
 
 // The message channel technique was discovered by Malte Ubl and was the
@@ -276,7 +276,7 @@ function makeRequestCallFromMutationObserver(callback) {
 // even then.
 
 function makeRequestCallFromTimer(callback) {
-    return function requestCall() {
+  return function requestCall() {
         // We dispatch a timeout with a specified delay of 0 for engines that
         // can reliably accommodate that request. This will usually be snapped
         // to a 4 milisecond delay, but once we're flushing, there's no delay
@@ -293,9 +293,9 @@ function makeRequestCallFromTimer(callback) {
             clearTimeout(timeoutHandle);
             clearInterval(intervalHandle);
             callback();
-        }
-    };
-}
+          }
+        };
+      }
 
 // This is for `asap.js` only.
 // Its name will be periodically randomized to break any code that depends on
@@ -311,8 +311,8 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/asap/browser-raw.js","/../node_modules/asap")
 },{"1YiZ5S":27,"buffer":22}],3:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-"use strict";
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    "use strict";
 
 var domain; // The domain module is executed on demand
 var hasSetImmediate = typeof setImmediate === "function";
@@ -328,15 +328,15 @@ var hasSetImmediate = typeof setImmediate === "function";
 // call `rawAsap.requestFlush` if an exception is thrown.
 module.exports = rawAsap;
 function rawAsap(task) {
-    if (!queue.length) {
-        requestFlush();
-        flushing = true;
-    }
+  if (!queue.length) {
+    requestFlush();
+    flushing = true;
+  }
     // Avoids a function call
     queue[queue.length] = task;
-}
+  }
 
-var queue = [];
+  var queue = [];
 // Once a flush has been requested, no further calls to `requestFlush` are
 // necessary until the next `flush` completes.
 var flushing = false;
@@ -356,8 +356,8 @@ var capacity = 1024;
 // However, `flush` does not make any arrangements to be called again if an
 // exception is thrown.
 function flush() {
-    while (index < queue.length) {
-        var currentIndex = index;
+  while (index < queue.length) {
+    var currentIndex = index;
         // Advance the index before calling the task. This ensures that we will
         // begin flushing on the next task the task throws an error.
         index = index + 1;
@@ -371,31 +371,31 @@ function flush() {
             // Manually shift all values starting at the index back to the
             // beginning of the queue.
             for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
-                queue[scan] = queue[scan + index];
+              queue[scan] = queue[scan + index];
             }
             queue.length -= index;
             index = 0;
+          }
         }
-    }
-    queue.length = 0;
-    index = 0;
-    flushing = false;
-}
+        queue.length = 0;
+        index = 0;
+        flushing = false;
+      }
 
-rawAsap.requestFlush = requestFlush;
-function requestFlush() {
+      rawAsap.requestFlush = requestFlush;
+      function requestFlush() {
     // Ensure flushing is not bound to any domain.
     // It is not sufficient to exit the domain, because domains exist on a stack.
     // To execute code outside of any domain, the following dance is necessary.
     var parentDomain = process.domain;
     if (parentDomain) {
-        if (!domain) {
+      if (!domain) {
             // Lazy execute the domain module.
             // Only employed if the user elects to use domains.
             domain = require("domain");
+          }
+          domain.active = process.domain = null;
         }
-        domain.active = process.domain = null;
-    }
 
     // `setImmediate` is slower that `process.nextTick`, but `process.nextTick`
     // cannot handle recursion.
@@ -404,38 +404,38 @@ function requestFlush() {
     // Conveniently, `setImmediate` was introduced in the same version
     // `process.nextTick` started throwing recursion errors.
     if (flushing && hasSetImmediate) {
-        setImmediate(flush);
+      setImmediate(flush);
     } else {
-        process.nextTick(flush);
+      process.nextTick(flush);
     }
 
     if (parentDomain) {
-        domain.active = process.domain = parentDomain;
+      domain.active = process.domain = parentDomain;
     }
-}
+  }
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/asap/raw.js","/../node_modules/asap")
 },{"1YiZ5S":27,"buffer":22,"domain":25}],4:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-module.exports = require('./lib/axios');
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/index.js","/../node_modules/axios")
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    module.exports = require('./lib/axios');
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/index.js","/../node_modules/axios")
 },{"./lib/axios":6,"1YiZ5S":27,"buffer":22}],5:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
-var buildURL = require('./../helpers/buildURL');
-var parseHeaders = require('./../helpers/parseHeaders');
-var transformData = require('./../helpers/transformData');
-var isURLSameOrigin = require('./../helpers/isURLSameOrigin');
-var btoa = (typeof window !== 'undefined' && window.btoa) || require('./../helpers/btoa');
-var settle = require('../helpers/settle');
+    var utils = require('./../utils');
+    var buildURL = require('./../helpers/buildURL');
+    var parseHeaders = require('./../helpers/parseHeaders');
+    var transformData = require('./../helpers/transformData');
+    var isURLSameOrigin = require('./../helpers/isURLSameOrigin');
+    var btoa = (typeof window !== 'undefined' && window.btoa) || require('./../helpers/btoa');
+    var settle = require('../helpers/settle');
 
-module.exports = function xhrAdapter(resolve, reject, config) {
-  var requestData = config.data;
-  var requestHeaders = config.headers;
+    module.exports = function xhrAdapter(resolve, reject, config) {
+      var requestData = config.data;
+      var requestHeaders = config.headers;
 
-  if (utils.isFormData(requestData)) {
+      if (utils.isFormData(requestData)) {
     delete requestHeaders['Content-Type']; // Let the browser set it
   }
 
@@ -486,7 +486,7 @@ module.exports = function xhrAdapter(resolve, reject, config) {
         responseData,
         responseHeaders,
         config.transformResponse
-      ),
+        ),
       // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
       status: request.status === 1223 ? 204 : request.status,
       statusText: request.status === 1223 ? 'No Content' : request.statusText,
@@ -530,8 +530,8 @@ module.exports = function xhrAdapter(resolve, reject, config) {
 
     // Add xsrf header
     var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
-        cookies.read(config.xsrfCookieName) :
-        undefined;
+    cookies.read(config.xsrfCookieName) :
+    undefined;
 
     if (xsrfValue) {
       requestHeaders[config.xsrfHeaderName] = xsrfValue;
@@ -586,28 +586,28 @@ module.exports = function xhrAdapter(resolve, reject, config) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/adapters/xhr.js","/../node_modules/axios/lib/adapters")
 },{"../helpers/settle":18,"./../helpers/btoa":11,"./../helpers/buildURL":12,"./../helpers/cookies":14,"./../helpers/isURLSameOrigin":16,"./../helpers/parseHeaders":17,"./../helpers/transformData":20,"./../utils":21,"1YiZ5S":27,"buffer":22}],6:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var defaults = require('./defaults');
-var utils = require('./utils');
-var dispatchRequest = require('./core/dispatchRequest');
-var InterceptorManager = require('./core/InterceptorManager');
-var isAbsoluteURL = require('./helpers/isAbsoluteURL');
-var combineURLs = require('./helpers/combineURLs');
-var bind = require('./helpers/bind');
-var transformData = require('./helpers/transformData');
+    var defaults = require('./defaults');
+    var utils = require('./utils');
+    var dispatchRequest = require('./core/dispatchRequest');
+    var InterceptorManager = require('./core/InterceptorManager');
+    var isAbsoluteURL = require('./helpers/isAbsoluteURL');
+    var combineURLs = require('./helpers/combineURLs');
+    var bind = require('./helpers/bind');
+    var transformData = require('./helpers/transformData');
 
-function Axios(defaultConfig) {
-  this.defaults = utils.merge({}, defaultConfig);
-  this.interceptors = {
-    request: new InterceptorManager(),
-    response: new InterceptorManager()
-  };
-}
+    function Axios(defaultConfig) {
+      this.defaults = utils.merge({}, defaultConfig);
+      this.interceptors = {
+        request: new InterceptorManager(),
+        response: new InterceptorManager()
+      };
+    }
 
-Axios.prototype.request = function request(config) {
-  /*eslint no-param-reassign:0*/
+    Axios.prototype.request = function request(config) {
+      /*eslint no-param-reassign:0*/
   // Allow for axios('example/url'[, config]) a la fetch API
   if (typeof config === 'string') {
     config = utils.merge({
@@ -630,21 +630,21 @@ Axios.prototype.request = function request(config) {
     config.data,
     config.headers,
     config.transformRequest
-  );
+    );
 
   // Flatten headers
   config.headers = utils.merge(
     config.headers.common || {},
     config.headers[config.method] || {},
     config.headers || {}
-  );
+    );
 
   utils.forEach(
     ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
     function cleanHeaderConfig(method) {
       delete config.headers[method];
     }
-  );
+    );
 
   // Hook up interceptors middleware
   var chain = [dispatchRequest, undefined];
@@ -710,14 +710,14 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/axios.js","/../node_modules/axios/lib")
 },{"./core/InterceptorManager":7,"./core/dispatchRequest":8,"./defaults":9,"./helpers/bind":10,"./helpers/combineURLs":13,"./helpers/isAbsoluteURL":15,"./helpers/spread":19,"./helpers/transformData":20,"./utils":21,"1YiZ5S":27,"buffer":22}],7:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
-function InterceptorManager() {
-  this.handlers = [];
-}
+    function InterceptorManager() {
+      this.handlers = [];
+    }
 
 /**
  * Add a new interceptor to the stack
@@ -727,7 +727,7 @@ function InterceptorManager() {
  *
  * @return {Number} An ID used to remove interceptor later
  */
-InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+ InterceptorManager.prototype.use = function use(fulfilled, rejected) {
   this.handlers.push({
     fulfilled: fulfilled,
     rejected: rejected
@@ -740,7 +740,7 @@ InterceptorManager.prototype.use = function use(fulfilled, rejected) {
  *
  * @param {Number} id The ID that was returned by `use`
  */
-InterceptorManager.prototype.eject = function eject(id) {
+ InterceptorManager.prototype.eject = function eject(id) {
   if (this.handlers[id]) {
     this.handlers[id] = null;
   }
@@ -754,7 +754,7 @@ InterceptorManager.prototype.eject = function eject(id) {
  *
  * @param {Function} fn The function to call for each interceptor
  */
-InterceptorManager.prototype.forEach = function forEach(fn) {
+ InterceptorManager.prototype.forEach = function forEach(fn) {
   utils.forEach(this.handlers, function forEachHandler(h) {
     if (h !== null) {
       fn(h);
@@ -766,8 +766,8 @@ module.exports = InterceptorManager;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/core/InterceptorManager.js","/../node_modules/axios/lib/core")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],8:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 /**
  * Dispatch a request to the server using whichever adapter
@@ -776,7 +776,7 @@ module.exports = InterceptorManager;
  * @param {object} config The config that is to be used for the request
  * @returns {Promise} The Promise to be fulfilled
  */
-module.exports = function dispatchRequest(config) {
+ module.exports = function dispatchRequest(config) {
   return new Promise(function executor(resolve, reject) {
     try {
       var adapter;
@@ -804,25 +804,25 @@ module.exports = function dispatchRequest(config) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/core/dispatchRequest.js","/../node_modules/axios/lib/core")
 },{"../adapters/http":5,"../adapters/xhr":5,"1YiZ5S":27,"buffer":22}],9:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./utils');
+    var utils = require('./utils');
 
-var PROTECTION_PREFIX = /^\)\]\}',?\n/;
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
+    var PROTECTION_PREFIX = /^\)\]\}',?\n/;
+    var DEFAULT_CONTENT_TYPE = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
 
-module.exports = {
-  transformRequest: [function transformRequest(data, headers) {
-    if (utils.isFormData(data) || utils.isArrayBuffer(data) || utils.isStream(data)) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isObject(data) && !utils.isFile(data) && !utils.isBlob(data)) {
+    module.exports = {
+      transformRequest: [function transformRequest(data, headers) {
+        if (utils.isFormData(data) || utils.isArrayBuffer(data) || utils.isStream(data)) {
+          return data;
+        }
+        if (utils.isArrayBufferView(data)) {
+          return data.buffer;
+        }
+        if (utils.isObject(data) && !utils.isFile(data) && !utils.isBlob(data)) {
       // Set application/json if no Content-Type has been specified
       if (!utils.isUndefined(headers)) {
         utils.forEach(headers, function processContentTypeHeader(val, key) {
@@ -874,23 +874,23 @@ module.exports = {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/defaults.js","/../node_modules/axios/lib")
 },{"./utils":21,"1YiZ5S":27,"buffer":22}],10:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
+    module.exports = function bind(fn, thisArg) {
+      return function wrap() {
+        var args = new Array(arguments.length);
+        for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i];
+        }
+        return fn.apply(thisArg, args);
+      };
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/bind.js","/../node_modules/axios/lib/helpers")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/bind.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],11:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
 
@@ -915,35 +915,35 @@ function btoa(input) {
     str.charAt(idx | 0) || (map = '=', idx % 1);
     // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
     output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-  ) {
+    ) {
     charCode = str.charCodeAt(idx += 3 / 4);
-    if (charCode > 0xFF) {
-      throw new E();
-    }
-    block = block << 8 | charCode;
+  if (charCode > 0xFF) {
+    throw new E();
   }
-  return output;
+  block = block << 8 | charCode;
+}
+return output;
 }
 
 module.exports = btoa;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/btoa.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],12:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
-function encode(val) {
-  return encodeURIComponent(val).
-    replace(/%40/gi, '@').
-    replace(/%3A/gi, ':').
-    replace(/%24/g, '$').
-    replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
-}
+    function encode(val) {
+      return encodeURIComponent(val).
+      replace(/%40/gi, '@').
+      replace(/%3A/gi, ':').
+      replace(/%24/g, '$').
+      replace(/%2C/gi, ',').
+      replace(/%20/g, '+').
+      replace(/%5B/gi, '[').
+      replace(/%5D/gi, ']');
+    }
 
 /**
  * Build a URL by appending params to the end
@@ -952,7 +952,7 @@ function encode(val) {
  * @param {object} [params] The params to be appended
  * @returns {string} The formatted url
  */
-module.exports = function buildURL(url, params, paramsSerializer) {
+ module.exports = function buildURL(url, params, paramsSerializer) {
   /*eslint no-param-reassign:0*/
   if (!params) {
     return url;
@@ -1000,8 +1000,8 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/buildURL.js","/../node_modules/axios/lib/helpers")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],13:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 /**
  * Creates a new URL by combining the specified URLs
@@ -1010,19 +1010,19 @@ module.exports = function buildURL(url, params, paramsSerializer) {
  * @param {string} relativeURL The relative URL
  * @returns {string} The combined URL
  */
-module.exports = function combineURLs(baseURL, relativeURL) {
+ module.exports = function combineURLs(baseURL, relativeURL) {
   return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '');
 };
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/combineURLs.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],14:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
-module.exports = (
-  utils.isStandardBrowserEnv() ?
+    module.exports = (
+      utils.isStandardBrowserEnv() ?
 
   // Standard browser envs support document.cookie
   (function standardBrowserEnv() {
@@ -1069,12 +1069,12 @@ module.exports = (
       remove: function remove() {}
     };
   })()
-);
+  );
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/cookies.js","/../node_modules/axios/lib/helpers")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/cookies.js","/../node_modules/axios/lib/helpers")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],15:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 /**
  * Determines whether the specified URL is absolute
@@ -1082,7 +1082,7 @@ module.exports = (
  * @param {string} url The URL to test
  * @returns {boolean} True if the specified URL is absolute, otherwise false
  */
-module.exports = function isAbsoluteURL(url) {
+ module.exports = function isAbsoluteURL(url) {
   // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
   // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
   // by any combination of letters, digits, plus, period, or hyphen.
@@ -1091,13 +1091,13 @@ module.exports = function isAbsoluteURL(url) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/isAbsoluteURL.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],16:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
-module.exports = (
-  utils.isStandardBrowserEnv() ?
+    module.exports = (
+      utils.isStandardBrowserEnv() ?
 
   // Standard browser envs have full support of the APIs needed to test
   // whether the request URL is of the same origin as current location.
@@ -1133,8 +1133,8 @@ module.exports = (
         hostname: urlParsingNode.hostname,
         port: urlParsingNode.port,
         pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-                  urlParsingNode.pathname :
-                  '/' + urlParsingNode.pathname
+        urlParsingNode.pathname :
+        '/' + urlParsingNode.pathname
       };
     }
 
@@ -1149,7 +1149,7 @@ module.exports = (
     return function isURLSameOrigin(requestURL) {
       var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
       return (parsed.protocol === originURL.protocol &&
-            parsed.host === originURL.host);
+        parsed.host === originURL.host);
     };
   })() :
 
@@ -1159,14 +1159,14 @@ module.exports = (
       return true;
     };
   })()
-);
+  );
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/isURLSameOrigin.js","/../node_modules/axios/lib/helpers")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/isURLSameOrigin.js","/../node_modules/axios/lib/helpers")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],17:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
 /**
  * Parse headers into an object
@@ -1181,7 +1181,7 @@ var utils = require('./../utils');
  * @param {String} headers Headers needing to be parsed
  * @returns {Object} Headers parsed into an object
  */
-module.exports = function parseHeaders(headers) {
+ module.exports = function parseHeaders(headers) {
   var parsed = {};
   var key;
   var val;
@@ -1204,8 +1204,8 @@ module.exports = function parseHeaders(headers) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/parseHeaders.js","/../node_modules/axios/lib/helpers")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],18:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -1214,7 +1214,7 @@ module.exports = function parseHeaders(headers) {
  * @param {Function} reject A function that rejects the promise.
  * @param {object} response The response.
  */
-module.exports = function settle(resolve, reject, response) {
+ module.exports = function settle(resolve, reject, response) {
   var validateStatus = response.config.validateStatus;
   // Note: status is not exposed by XDomainRequest
   if (!response.status || !validateStatus || validateStatus(response.status)) {
@@ -1226,8 +1226,8 @@ module.exports = function settle(resolve, reject, response) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/settle.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],19:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 /**
  * Syntactic sugar for invoking a function and expanding an array for arguments.
@@ -1249,7 +1249,7 @@ module.exports = function settle(resolve, reject, response) {
  * @param {Function} callback
  * @returns {Function}
  */
-module.exports = function spread(callback) {
+ module.exports = function spread(callback) {
   return function wrap(arr) {
     return callback.apply(null, arr);
   };
@@ -1257,10 +1257,10 @@ module.exports = function spread(callback) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/spread.js","/../node_modules/axios/lib/helpers")
 },{"1YiZ5S":27,"buffer":22}],20:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var utils = require('./../utils');
+    var utils = require('./../utils');
 
 /**
  * Transform the data for a request or a response
@@ -1270,7 +1270,7 @@ var utils = require('./../utils');
  * @param {Array|Function} fns A single function or Array of functions
  * @returns {*} The resulting transformed data
  */
-module.exports = function transformData(data, headers, fns) {
+ module.exports = function transformData(data, headers, fns) {
   /*eslint no-param-reassign:0*/
   utils.forEach(fns, function transform(fn) {
     data = fn(data, headers);
@@ -1281,10 +1281,10 @@ module.exports = function transformData(data, headers, fns) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/helpers/transformData.js","/../node_modules/axios/lib/helpers")
 },{"./../utils":21,"1YiZ5S":27,"buffer":22}],21:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-/*global toString:true*/
+    /*global toString:true*/
 
 // utils is a library of generic helper functions non-specific to axios
 
@@ -1296,7 +1296,7 @@ var toString = Object.prototype.toString;
  * @param {Object} val The value to test
  * @returns {boolean} True if value is an Array, otherwise false
  */
-function isArray(val) {
+ function isArray(val) {
   return toString.call(val) === '[object Array]';
 }
 
@@ -1306,7 +1306,7 @@ function isArray(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is an ArrayBuffer, otherwise false
  */
-function isArrayBuffer(val) {
+ function isArrayBuffer(val) {
   return toString.call(val) === '[object ArrayBuffer]';
 }
 
@@ -1316,7 +1316,7 @@ function isArrayBuffer(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is an FormData, otherwise false
  */
-function isFormData(val) {
+ function isFormData(val) {
   return (typeof FormData !== 'undefined') && (val instanceof FormData);
 }
 
@@ -1326,7 +1326,7 @@ function isFormData(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
  */
-function isArrayBufferView(val) {
+ function isArrayBufferView(val) {
   var result;
   if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
     result = ArrayBuffer.isView(val);
@@ -1342,7 +1342,7 @@ function isArrayBufferView(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a String, otherwise false
  */
-function isString(val) {
+ function isString(val) {
   return typeof val === 'string';
 }
 
@@ -1352,7 +1352,7 @@ function isString(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a Number, otherwise false
  */
-function isNumber(val) {
+ function isNumber(val) {
   return typeof val === 'number';
 }
 
@@ -1362,7 +1362,7 @@ function isNumber(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if the value is undefined, otherwise false
  */
-function isUndefined(val) {
+ function isUndefined(val) {
   return typeof val === 'undefined';
 }
 
@@ -1372,7 +1372,7 @@ function isUndefined(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is an Object, otherwise false
  */
-function isObject(val) {
+ function isObject(val) {
   return val !== null && typeof val === 'object';
 }
 
@@ -1382,7 +1382,7 @@ function isObject(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a Date, otherwise false
  */
-function isDate(val) {
+ function isDate(val) {
   return toString.call(val) === '[object Date]';
 }
 
@@ -1392,7 +1392,7 @@ function isDate(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a File, otherwise false
  */
-function isFile(val) {
+ function isFile(val) {
   return toString.call(val) === '[object File]';
 }
 
@@ -1402,7 +1402,7 @@ function isFile(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a Blob, otherwise false
  */
-function isBlob(val) {
+ function isBlob(val) {
   return toString.call(val) === '[object Blob]';
 }
 
@@ -1412,7 +1412,7 @@ function isBlob(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a Function, otherwise false
  */
-function isFunction(val) {
+ function isFunction(val) {
   return toString.call(val) === '[object Function]';
 }
 
@@ -1422,7 +1422,7 @@ function isFunction(val) {
  * @param {Object} val The value to test
  * @returns {boolean} True if value is a Stream, otherwise false
  */
-function isStream(val) {
+ function isStream(val) {
   return isObject(val) && isFunction(val.pipe);
 }
 
@@ -1432,7 +1432,7 @@ function isStream(val) {
  * @param {String} str The String to trim
  * @returns {String} The String freed of excess whitespace
  */
-function trim(str) {
+ function trim(str) {
   return str.replace(/^\s*/, '').replace(/\s*$/, '');
 }
 
@@ -1449,12 +1449,12 @@ function trim(str) {
  * react-native:
  *  typeof document.createElement -> undefined
  */
-function isStandardBrowserEnv() {
+ function isStandardBrowserEnv() {
   return (
     typeof window !== 'undefined' &&
     typeof document !== 'undefined' &&
     typeof document.createElement === 'function'
-  );
+    );
 }
 
 /**
@@ -1469,7 +1469,7 @@ function isStandardBrowserEnv() {
  * @param {Object|Array} obj The object to iterate
  * @param {Function} fn The callback to invoke for each item
  */
-function forEach(obj, fn) {
+ function forEach(obj, fn) {
   // Don't bother if no value provided
   if (obj === null || typeof obj === 'undefined') {
     return;
@@ -1513,7 +1513,7 @@ function forEach(obj, fn) {
  * @param {Object} obj1 Object to merge
  * @returns {Object} Result of all merge properties
  */
-function merge(/* obj1, obj2, obj3, ... */) {
+ function merge(/* obj1, obj2, obj3, ... */) {
   var result = {};
   function assignValue(val, key) {
     if (typeof result[key] === 'object' && typeof val === 'object') {
@@ -1551,7 +1551,7 @@ module.exports = {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/axios/lib/utils.js","/../node_modules/axios/lib")
 },{"1YiZ5S":27,"buffer":22}],22:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -1559,20 +1559,20 @@ module.exports = {
  * @license  MIT
  */
 
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
+ var base64 = require('base64-js')
+ var ieee754 = require('ieee754')
 
-exports.Buffer = Buffer
-exports.SlowBuffer = Buffer
-exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
+ exports.Buffer = Buffer
+ exports.SlowBuffer = Buffer
+ exports.INSPECT_MAX_BYTES = 50
+ Buffer.poolSize = 8192
 
 /**
  * If `Buffer._useTypedArrays`:
  *   === true    Use Uint8Array implementation (fastest)
  *   === false   Use Object implementation (compatible down to IE6)
  */
-Buffer._useTypedArrays = (function () {
+ Buffer._useTypedArrays = (function () {
   // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
   // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
   // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
@@ -1584,10 +1584,10 @@ Buffer._useTypedArrays = (function () {
     arr.foo = function () { return 42 }
     return 42 === arr.foo() &&
         typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
-  } catch (e) {
-    return false
-  }
-})()
+      } catch (e) {
+        return false
+      }
+    })()
 
 /**
  * Class: Buffer
@@ -1601,7 +1601,7 @@ Buffer._useTypedArrays = (function () {
  * By augmenting the instances, we can avoid modifying the `Uint8Array`
  * prototype.
  */
-function Buffer (subject, encoding, noZero) {
+ function Buffer (subject, encoding, noZero) {
   if (!(this instanceof Buffer))
     return new Buffer(subject, encoding, noZero)
 
@@ -1677,9 +1677,9 @@ Buffer.isEncoding = function (encoding) {
     case 'ucs-2':
     case 'utf16le':
     case 'utf-16le':
-      return true
+    return true
     default:
-      return false
+    return false
   }
 }
 
@@ -1692,35 +1692,35 @@ Buffer.byteLength = function (str, encoding) {
   str = str + ''
   switch (encoding || 'utf8') {
     case 'hex':
-      ret = str.length / 2
-      break
+    ret = str.length / 2
+    break
     case 'utf8':
     case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
+    ret = utf8ToBytes(str).length
+    break
     case 'ascii':
     case 'binary':
     case 'raw':
-      ret = str.length
-      break
+    ret = str.length
+    break
     case 'base64':
-      ret = base64ToBytes(str).length
-      break
+    ret = base64ToBytes(str).length
+    break
     case 'ucs2':
     case 'ucs-2':
     case 'utf16le':
     case 'utf-16le':
-      ret = str.length * 2
-      break
+    ret = str.length * 2
+    break
     default:
-      throw new Error('Unknown encoding')
+    throw new Error('Unknown encoding')
   }
   return ret
 }
 
 Buffer.concat = function (list, totalLength) {
   assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
-      'list should be an Array.')
+    'list should be an Array.')
 
   if (list.length === 0) {
     return new Buffer(0)
@@ -1779,13 +1779,13 @@ function _hexWrite (buf, string, offset, length) {
 
 function _utf8Write (buf, string, offset, length) {
   var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf8ToBytes(string), buf, offset, length)
+  blitBuffer(utf8ToBytes(string), buf, offset, length)
   return charsWritten
 }
 
 function _asciiWrite (buf, string, offset, length) {
   var charsWritten = Buffer._charsWritten =
-    blitBuffer(asciiToBytes(string), buf, offset, length)
+  blitBuffer(asciiToBytes(string), buf, offset, length)
   return charsWritten
 }
 
@@ -1795,13 +1795,13 @@ function _binaryWrite (buf, string, offset, length) {
 
 function _base64Write (buf, string, offset, length) {
   var charsWritten = Buffer._charsWritten =
-    blitBuffer(base64ToBytes(string), buf, offset, length)
+  blitBuffer(base64ToBytes(string), buf, offset, length)
   return charsWritten
 }
 
 function _utf16leWrite (buf, string, offset, length) {
   var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf16leToBytes(string), buf, offset, length)
+  blitBuffer(utf16leToBytes(string), buf, offset, length)
   return charsWritten
 }
 
@@ -1835,29 +1835,29 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
   var ret
   switch (encoding) {
     case 'hex':
-      ret = _hexWrite(this, string, offset, length)
-      break
+    ret = _hexWrite(this, string, offset, length)
+    break
     case 'utf8':
     case 'utf-8':
-      ret = _utf8Write(this, string, offset, length)
-      break
+    ret = _utf8Write(this, string, offset, length)
+    break
     case 'ascii':
-      ret = _asciiWrite(this, string, offset, length)
-      break
+    ret = _asciiWrite(this, string, offset, length)
+    break
     case 'binary':
-      ret = _binaryWrite(this, string, offset, length)
-      break
+    ret = _binaryWrite(this, string, offset, length)
+    break
     case 'base64':
-      ret = _base64Write(this, string, offset, length)
-      break
+    ret = _base64Write(this, string, offset, length)
+    break
     case 'ucs2':
     case 'ucs-2':
     case 'utf16le':
     case 'utf-16le':
-      ret = _utf16leWrite(this, string, offset, length)
-      break
+    ret = _utf16leWrite(this, string, offset, length)
+    break
     default:
-      throw new Error('Unknown encoding')
+    throw new Error('Unknown encoding')
   }
   return ret
 }
@@ -1868,8 +1868,8 @@ Buffer.prototype.toString = function (encoding, start, end) {
   encoding = String(encoding || 'utf8').toLowerCase()
   start = Number(start) || 0
   end = (end !== undefined)
-    ? Number(end)
-    : end = self.length
+  ? Number(end)
+  : end = self.length
 
   // Fastpath empty strings
   if (end === start)
@@ -1878,29 +1878,29 @@ Buffer.prototype.toString = function (encoding, start, end) {
   var ret
   switch (encoding) {
     case 'hex':
-      ret = _hexSlice(self, start, end)
-      break
+    ret = _hexSlice(self, start, end)
+    break
     case 'utf8':
     case 'utf-8':
-      ret = _utf8Slice(self, start, end)
-      break
+    ret = _utf8Slice(self, start, end)
+    break
     case 'ascii':
-      ret = _asciiSlice(self, start, end)
-      break
+    ret = _asciiSlice(self, start, end)
+    break
     case 'binary':
-      ret = _binarySlice(self, start, end)
-      break
+    ret = _binarySlice(self, start, end)
+    break
     case 'base64':
-      ret = _base64Slice(self, start, end)
-      break
+    ret = _base64Slice(self, start, end)
+    break
     case 'ucs2':
     case 'ucs-2':
     case 'utf16le':
     case 'utf-16le':
-      ret = _utf16leSlice(self, start, end)
-      break
+    ret = _utf16leSlice(self, start, end)
+    break
     default:
-      throw new Error('Unknown encoding')
+    throw new Error('Unknown encoding')
   }
   return ret
 }
@@ -1917,19 +1917,19 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   var source = this
 
   if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
+    if (!end && end !== 0) end = this.length
+      if (!target_start) target_start = 0
 
   // Copy 0 bytes; we're done
-  if (end === start) return
+if (end === start) return
   if (target.length === 0 || source.length === 0) return
 
   // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
+assert(end >= start, 'sourceEnd < sourceStart')
+assert(target_start >= 0 && target_start < target.length,
+  'targetStart out of bounds')
+assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
+assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
 
   // Are we oob?
   if (end > this.length)
@@ -1989,40 +1989,40 @@ function _hexSlice (buf, start, end) {
   var len = buf.length
 
   if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
+    if (!end || end < 0 || end > len) end = len
 
-  var out = ''
-  for (var i = start; i < end; i++) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function _utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function (start, end) {
-  var len = this.length
-  start = clamp(start, len, 0)
-  end = clamp(end, len, len)
-
-  if (Buffer._useTypedArrays) {
-    return Buffer._augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
+      var out = ''
+    for (var i = start; i < end; i++) {
+      out += toHex(buf[i])
     }
-    return newBuf
+    return out
   }
-}
+
+  function _utf16leSlice (buf, start, end) {
+    var bytes = buf.slice(start, end)
+    var res = ''
+    for (var i = 0; i < bytes.length; i += 2) {
+      res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
+    }
+    return res
+  }
+
+  Buffer.prototype.slice = function (start, end) {
+    var len = this.length
+    start = clamp(start, len, 0)
+    end = clamp(end, len, len)
+
+    if (Buffer._useTypedArrays) {
+      return Buffer._augment(this.subarray(start, end))
+    } else {
+      var sliceLen = end - start
+      var newBuf = new Buffer(sliceLen, undefined, true)
+      for (var i = 0; i < sliceLen; i++) {
+        newBuf[i] = this[i + start]
+      }
+      return newBuf
+    }
+  }
 
 // `get` will be removed in Node 0.13+
 Buffer.prototype.get = function (offset) {
@@ -2123,7 +2123,7 @@ Buffer.prototype.readUInt32BE = function (offset, noAssert) {
 Buffer.prototype.readInt8 = function (offset, noAssert) {
   if (!noAssert) {
     assert(offset !== undefined && offset !== null,
-        'missing offset')
+      'missing offset')
     assert(offset < this.length, 'Trying to read beyond buffer length')
   }
 
@@ -2235,7 +2235,7 @@ Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
 
   if (offset >= this.length) return
 
-  this[offset] = value
+    this[offset] = value
 }
 
 function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
@@ -2253,8 +2253,8 @@ function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
 
   for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
     buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
+    (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+    (littleEndian ? i : 1 - i) * 8
   }
 }
 
@@ -2281,7 +2281,7 @@ function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
 
   for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
     buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+    (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
   }
 }
 
@@ -2394,7 +2394,7 @@ function _writeDouble (buf, value, offset, littleEndian, noAssert) {
     assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
+      'Trying to write beyond buffer length')
     verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
   }
 
@@ -2416,46 +2416,46 @@ Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
 // fill(value, start=0, end=buffer.length)
 Buffer.prototype.fill = function (value, start, end) {
   if (!value) value = 0
-  if (!start) start = 0
-  if (!end) end = this.length
+    if (!start) start = 0
+      if (!end) end = this.length
 
-  if (typeof value === 'string') {
-    value = value.charCodeAt(0)
-  }
+        if (typeof value === 'string') {
+          value = value.charCodeAt(0)
+        }
 
-  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
-  assert(end >= start, 'end < start')
+        assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
+        assert(end >= start, 'end < start')
 
   // Fill 0 bytes; we're done
   if (end === start) return
-  if (this.length === 0) return
+    if (this.length === 0) return
 
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
+      assert(start >= 0 && start < this.length, 'start out of bounds')
+    assert(end >= 0 && end <= this.length, 'end out of bounds')
 
-  for (var i = start; i < end; i++) {
-    this[i] = value
-  }
-}
-
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
+    for (var i = start; i < end; i++) {
+      this[i] = value
     }
   }
-  return '<Buffer ' + out.join(' ') + '>'
-}
+
+  Buffer.prototype.inspect = function () {
+    var out = []
+    var len = this.length
+    for (var i = 0; i < len; i++) {
+      out[i] = toHex(this[i])
+      if (i === exports.INSPECT_MAX_BYTES) {
+        out[i + 1] = '...'
+        break
+      }
+    }
+    return '<Buffer ' + out.join(' ') + '>'
+  }
 
 /**
  * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
  * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
  */
-Buffer.prototype.toArrayBuffer = function () {
+ Buffer.prototype.toArrayBuffer = function () {
   if (typeof Uint8Array !== 'undefined') {
     if (Buffer._useTypedArrays) {
       return (new Buffer(this)).buffer
@@ -2475,7 +2475,7 @@ Buffer.prototype.toArrayBuffer = function () {
 
 function stringtrim (str) {
   if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
+    return str.replace(/^\s+|\s+$/g, '')
 }
 
 var BP = Buffer.prototype
@@ -2483,7 +2483,7 @@ var BP = Buffer.prototype
 /**
  * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
-Buffer._augment = function (arr) {
+ Buffer._augment = function (arr) {
   arr._isBuffer = true
 
   // save reference to original Uint8Array get/set methods before overwriting
@@ -2539,11 +2539,11 @@ Buffer._augment = function (arr) {
 function clamp (index, len, defaultValue) {
   if (typeof index !== 'number') return defaultValue
   index = ~~index;  // Coerce to integer.
-  if (index >= len) return len
+if (index >= len) return len
   if (index >= 0) return index
-  index += len
+    index += len
   if (index >= 0) return index
-  return 0
+    return 0
 }
 
 function coerce (length) {
@@ -2562,13 +2562,13 @@ function isArray (subject) {
 
 function isArrayish (subject) {
   return isArray(subject) || Buffer.isBuffer(subject) ||
-      subject && typeof subject === 'object' &&
-      typeof subject.length === 'number'
+  subject && typeof subject === 'object' &&
+  typeof subject.length === 'number'
 }
 
 function toHex (n) {
   if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
+    return n.toString(16)
 }
 
 function utf8ToBytes (str) {
@@ -2580,7 +2580,7 @@ function utf8ToBytes (str) {
     else {
       var start = i
       if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
+        var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
       for (var j = 0; j < h.length; j++)
         byteArray.push(parseInt(h[j], 16))
     }
@@ -2638,7 +2638,7 @@ function decodeUtf8Char (str) {
  * is non-negative. It has no fractional component and that it does not
  * exceed the maximum allowed value.
  */
-function verifuint (value, max) {
+ function verifuint (value, max) {
   assert(typeof value === 'number', 'cannot write a non-number as a number')
   assert(value >= 0, 'specified a negative value for writing an unsigned value')
   assert(value <= max, 'value is larger than maximum value for type')
@@ -2664,31 +2664,31 @@ function assert (test, message) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/index.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer")
 },{"1YiZ5S":27,"base64-js":23,"buffer":22,"ieee754":24}],23:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-;(function (exports) {
-  'use strict';
+    ;(function (exports) {
+      'use strict';
 
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
+      var Arr = (typeof Uint8Array !== 'undefined')
+      ? Uint8Array
+      : Array
 
-  var PLUS   = '+'.charCodeAt(0)
-  var SLASH  = '/'.charCodeAt(0)
-  var NUMBER = '0'.charCodeAt(0)
-  var LOWER  = 'a'.charCodeAt(0)
-  var UPPER  = 'A'.charCodeAt(0)
-  var PLUS_URL_SAFE = '-'.charCodeAt(0)
-  var SLASH_URL_SAFE = '_'.charCodeAt(0)
+      var PLUS   = '+'.charCodeAt(0)
+      var SLASH  = '/'.charCodeAt(0)
+      var NUMBER = '0'.charCodeAt(0)
+      var LOWER  = 'a'.charCodeAt(0)
+      var UPPER  = 'A'.charCodeAt(0)
+      var PLUS_URL_SAFE = '-'.charCodeAt(0)
+      var SLASH_URL_SAFE = '_'.charCodeAt(0)
 
-  function decode (elt) {
-    var code = elt.charCodeAt(0)
-    if (code === PLUS ||
-        code === PLUS_URL_SAFE)
+      function decode (elt) {
+        var code = elt.charCodeAt(0)
+        if (code === PLUS ||
+          code === PLUS_URL_SAFE)
       return 62 // '+'
     if (code === SLASH ||
-        code === SLASH_URL_SAFE)
+      code === SLASH_URL_SAFE)
       return 63 // '/'
     if (code < NUMBER)
       return -1 //no match
@@ -2752,13 +2752,13 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
       output = "",
       temp, length
 
-    function encode (num) {
-      return lookup.charAt(num)
-    }
+      function encode (num) {
+        return lookup.charAt(num)
+      }
 
-    function tripletToBase64 (num) {
-      return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-    }
+      function tripletToBase64 (num) {
+        return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+      }
 
     // go through the array every three bytes, we'll deal with trailing stuff later
     for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
@@ -2769,18 +2769,18 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     // pad the end with zeros, but make sure to not forget the extra bytes
     switch (extraBytes) {
       case 1:
-        temp = uint8[uint8.length - 1]
-        output += encode(temp >> 2)
-        output += encode((temp << 4) & 0x3F)
-        output += '=='
-        break
+      temp = uint8[uint8.length - 1]
+      output += encode(temp >> 2)
+      output += encode((temp << 4) & 0x3F)
+      output += '=='
+      break
       case 2:
-        temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-        output += encode(temp >> 10)
-        output += encode((temp >> 4) & 0x3F)
-        output += encode((temp << 2) & 0x3F)
-        output += '='
-        break
+      temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+      output += encode(temp >> 10)
+      output += encode((temp >> 4) & 0x3F)
+      output += encode((temp << 2) & 0x3F)
+      output += '='
+      break
     }
 
     return output
@@ -2790,97 +2790,97 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib")
 },{"1YiZ5S":27,"buffer":22}],24:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+      var e, m
+      var eLen = nBytes * 8 - mLen - 1
+      var eMax = (1 << eLen) - 1
+      var eBias = eMax >> 1
+      var nBits = -7
+      var i = isLE ? (nBytes - 1) : 0
+      var d = isLE ? -1 : 1
+      var s = buffer[offset + i]
 
-  i += d
+      i += d
 
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+      e = s & ((1 << (-nBits)) - 1)
+      s >>= (-nBits)
+      nBits += eLen
+      for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+        m = e & ((1 << (-nBits)) - 1)
+      e >>= (-nBits)
+      nBits += mLen
+      for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
+        if (e === 0) {
+          e = 1 - eBias
+        } else if (e === eMax) {
+          return m ? NaN : ((s ? -1 : 1) * Infinity)
+        } else {
+          m = m + Math.pow(2, mLen)
+          e = e - eBias
+        }
+        return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+      }
 
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+      exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+        var e, m, c
+        var eLen = nBytes * 8 - mLen - 1
+        var eMax = (1 << eLen) - 1
+        var eBias = eMax >> 1
+        var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+        var i = isLE ? 0 : (nBytes - 1)
+        var d = isLE ? 1 : -1
+        var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
 
-  value = Math.abs(value)
+        value = Math.abs(value)
 
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
+        if (isNaN(value) || value === Infinity) {
+          m = isNaN(value) ? 1 : 0
+          e = eMax
+        } else {
+          e = Math.floor(Math.log(value) / Math.LN2)
+          if (value * (c = Math.pow(2, -e)) < 1) {
+            e--
+            c *= 2
+          }
+          if (e + eBias >= 1) {
+            value += rt / c
+          } else {
+            value += rt * Math.pow(2, 1 - eBias)
+          }
+          if (value * c >= 2) {
+            e++
+            c /= 2
+          }
 
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
+          if (e + eBias >= eMax) {
+            m = 0
+            e = eMax
+          } else if (e + eBias >= 1) {
+            m = (value * c - 1) * Math.pow(2, mLen)
+            e = e + eBias
+          } else {
+            m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+            e = 0
+          }
+        }
 
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+        for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
 
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+          e = (e << mLen) | m
+        eLen += mLen
+        for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
 
-  buffer[offset + i - d] |= s * 128
-}
+          buffer[offset + i - d] |= s * 128
+      }
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/ieee754")
+    }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/buffer/node_modules/ieee754")
 },{"1YiZ5S":27,"buffer":22}],25:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 // This file should be ES5 compatible
 /* eslint prefer-spread:0, no-var:0, prefer-reflect:0, no-magic-numbers:0 */
 'use strict'
@@ -2953,7 +2953,7 @@ module.exports = (function () {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/domain-browser/index.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/domain-browser")
 },{"1YiZ5S":27,"buffer":22,"events":26}],26:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3009,9 +3009,9 @@ EventEmitter.prototype.emit = function(type) {
   // If there is no 'error' event listener then throw.
   if (type === 'error') {
     if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
+      (isObject(this._events.error) && !this._events.error.length)) {
       er = arguments[1];
-      if (er instanceof Error) {
+    if (er instanceof Error) {
         throw er; // Unhandled 'error' event
       }
       throw TypeError('Uncaught, unspecified "error" event.');
@@ -3027,21 +3027,21 @@ EventEmitter.prototype.emit = function(type) {
     switch (arguments.length) {
       // fast cases
       case 1:
-        handler.call(this);
-        break;
+      handler.call(this);
+      break;
       case 2:
-        handler.call(this, arguments[1]);
-        break;
+      handler.call(this, arguments[1]);
+      break;
       case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
+      handler.call(this, arguments[1], arguments[2]);
+      break;
       // slower
       default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
+      len = arguments.length;
+      args = new Array(len - 1);
+      for (i = 1; i < len; i++)
+        args[i - 1] = arguments[i];
+      handler.apply(this, args);
     }
   } else if (isObject(handler)) {
     len = arguments.length;
@@ -3071,18 +3071,18 @@ EventEmitter.prototype.addListener = function(type, listener) {
   // adding it to the listeners, first emit "newListener".
   if (this._events.newListener)
     this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
+      isFunction(listener.listener) ?
+      listener.listener : listener);
 
   if (!this._events[type])
     // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
+  this._events[type] = listener;
   else if (isObject(this._events[type]))
     // If we've already got an array, just append.
-    this._events[type].push(listener);
+  this._events[type].push(listener);
   else
     // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
+  this._events[type] = [this._events[type], listener];
 
   // Check for listener leak
   if (isObject(this._events[type]) && !this._events[type].warned) {
@@ -3096,9 +3096,9 @@ EventEmitter.prototype.addListener = function(type, listener) {
     if (m && m > 0 && this._events[type].length > m) {
       this._events[type].warned = true;
       console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
+        'leak detected. %d listeners added. ' +
+        'Use emitter.setMaxListeners() to increase limit.',
+        this._events[type].length);
       if (typeof console.trace === 'function') {
         // not supported in IE 10
         console.trace();
@@ -3147,35 +3147,35 @@ EventEmitter.prototype.removeListener = function(type, listener) {
   position = -1;
 
   if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
+    (isFunction(list.listener) && list.listener === listener)) {
     delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
+  if (this._events.removeListener)
+    this.emit('removeListener', type, listener);
 
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
+} else if (isObject(list)) {
+  for (i = length; i-- > 0;) {
+    if (list[i] === listener ||
+      (list[i].listener && list[i].listener === listener)) {
+      position = i;
+    break;
   }
+}
 
+if (position < 0)
   return this;
+
+if (list.length === 1) {
+  list.length = 0;
+  delete this._events[type];
+} else {
+  list.splice(position, 1);
+}
+
+if (this._events.removeListener)
+  this.emit('removeListener', type, listener);
+}
+
+return this;
 };
 
 EventEmitter.prototype.removeAllListeners = function(type) {
@@ -3258,44 +3258,44 @@ function isUndefined(arg) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/events/events.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/events")
 },{"1YiZ5S":27,"buffer":22}],27:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 // shim for using process in browser
 
 var process = module.exports = {};
 
 process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
+  var canSetImmediate = typeof window !== 'undefined'
+  && window.setImmediate;
+  var canPost = typeof window !== 'undefined'
+  && window.postMessage && window.addEventListener
+  ;
 
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
+  if (canSetImmediate) {
+    return function (f) { return window.setImmediate(f) };
+  }
 
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
+  if (canPost) {
+    var queue = [];
+    window.addEventListener('message', function (ev) {
+      var source = ev.source;
+      if ((source === window || source === null) && ev.data === 'process-tick') {
+        ev.stopPropagation();
+        if (queue.length > 0) {
+          var fn = queue.shift();
+          fn();
+        }
+      }
+    }, true);
 
     return function nextTick(fn) {
-        setTimeout(fn, 0);
+      queue.push(fn);
+      window.postMessage('process-tick', '*');
     };
+  }
+
+  return function nextTick(fn) {
+    setTimeout(fn, 0);
+  };
 })();
 
 process.title = 'browser';
@@ -3314,30 +3314,30 @@ process.removeAllListeners = noop;
 process.emit = noop;
 
 process.binding = function (name) {
-    throw new Error('process.binding is not supported');
+  throw new Error('process.binding is not supported');
 }
 
 // TODO(shtylman)
 process.cwd = function () { return '/' };
 process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
+  throw new Error('process.chdir is not supported');
 };
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/gulp-browserify/node_modules/browserify/node_modules/process/browser.js","/../node_modules/gulp-browserify/node_modules/browserify/node_modules/process")
 },{"1YiZ5S":27,"buffer":22}],28:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-module.exports = require('./lib')
+    module.exports = require('./lib')
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/index.js","/../node_modules/promise")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/index.js","/../node_modules/promise")
 },{"./lib":33,"1YiZ5S":27,"buffer":22}],29:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var asap = require('asap/raw');
+    var asap = require('asap/raw');
 
-function noop() {}
+    function noop() {}
 
 // States:
 //
@@ -3469,32 +3469,32 @@ function resolve(self, newValue) {
     return reject(
       self,
       new TypeError('A promise cannot be resolved with itself.')
-    );
+      );
   }
   if (
     newValue &&
     (typeof newValue === 'object' || typeof newValue === 'function')
-  ) {
-    var then = getThen(newValue);
-    if (then === IS_ERROR) {
-      return reject(self, LAST_ERROR);
-    }
-    if (
-      then === self.then &&
-      newValue instanceof Promise
     ) {
-      self._81 = 3;
-      self._65 = newValue;
-      finale(self);
-      return;
-    } else if (typeof then === 'function') {
-      doResolve(then.bind(newValue), self);
-      return;
-    }
+    var then = getThen(newValue);
+  if (then === IS_ERROR) {
+    return reject(self, LAST_ERROR);
   }
-  self._81 = 1;
+  if (
+    then === self.then &&
+    newValue instanceof Promise
+    ) {
+    self._81 = 3;
   self._65 = newValue;
   finale(self);
+  return;
+} else if (typeof then === 'function') {
+  doResolve(then.bind(newValue), self);
+  return;
+}
+}
+self._81 = 1;
+self._65 = newValue;
+finale(self);
 }
 
 function reject(self, newValue) {
@@ -3530,7 +3530,7 @@ function Handler(onFulfilled, onRejected, promise){
  *
  * Makes no guarantees about asynchrony.
  */
-function doResolve(fn, promise) {
+ function doResolve(fn, promise) {
   var done = false;
   var res = tryCallTwo(fn, function (value) {
     if (done) return;
@@ -3549,25 +3549,25 @@ function doResolve(fn, promise) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/core.js","/../node_modules/promise/lib")
 },{"1YiZ5S":27,"asap/raw":3,"buffer":22}],30:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var Promise = require('./core.js');
+    var Promise = require('./core.js');
 
-module.exports = Promise;
-Promise.prototype.done = function (onFulfilled, onRejected) {
-  var self = arguments.length ? this.then.apply(this, arguments) : this;
-  self.then(null, function (err) {
-    setTimeout(function () {
-      throw err;
-    }, 0);
-  });
-};
+    module.exports = Promise;
+    Promise.prototype.done = function (onFulfilled, onRejected) {
+      var self = arguments.length ? this.then.apply(this, arguments) : this;
+      self.then(null, function (err) {
+        setTimeout(function () {
+          throw err;
+        }, 0);
+      });
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/done.js","/../node_modules/promise/lib")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/done.js","/../node_modules/promise/lib")
 },{"./core.js":29,"1YiZ5S":27,"buffer":22}],31:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
 
@@ -3677,40 +3677,40 @@ Promise.prototype['catch'] = function (onRejected) {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/es6-extensions.js","/../node_modules/promise/lib")
 },{"./core.js":29,"1YiZ5S":27,"buffer":22}],32:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var Promise = require('./core.js');
+    var Promise = require('./core.js');
 
-module.exports = Promise;
-Promise.prototype['finally'] = function (f) {
-  return this.then(function (value) {
-    return Promise.resolve(f()).then(function () {
-      return value;
-    });
-  }, function (err) {
-    return Promise.resolve(f()).then(function () {
-      throw err;
-    });
-  });
-};
+    module.exports = Promise;
+    Promise.prototype['finally'] = function (f) {
+      return this.then(function (value) {
+        return Promise.resolve(f()).then(function () {
+          return value;
+        });
+      }, function (err) {
+        return Promise.resolve(f()).then(function () {
+          throw err;
+        });
+      });
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/finally.js","/../node_modules/promise/lib")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/finally.js","/../node_modules/promise/lib")
 },{"./core.js":29,"1YiZ5S":27,"buffer":22}],33:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-module.exports = require('./core.js');
-require('./done.js');
-require('./finally.js');
-require('./es6-extensions.js');
-require('./node-extensions.js');
-require('./synchronous.js');
+    module.exports = require('./core.js');
+    require('./done.js');
+    require('./finally.js');
+    require('./es6-extensions.js');
+    require('./node-extensions.js');
+    require('./synchronous.js');
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/index.js","/../node_modules/promise/lib")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/index.js","/../node_modules/promise/lib")
 },{"./core.js":29,"./done.js":30,"./es6-extensions.js":31,"./finally.js":32,"./node-extensions.js":34,"./synchronous.js":35,"1YiZ5S":27,"buffer":22}],34:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
 // This file contains then/promise specific extensions that are only useful
 // for node.js interop
@@ -3725,36 +3725,36 @@ module.exports = Promise;
 Promise.denodeify = function (fn, argumentCount) {
   if (
     typeof argumentCount === 'number' && argumentCount !== Infinity
-  ) {
+    ) {
     return denodeifyWithCount(fn, argumentCount);
-  } else {
-    return denodeifyWithoutCount(fn);
-  }
+} else {
+  return denodeifyWithoutCount(fn);
+}
 }
 
 var callbackFn = (
   'function (err, res) {' +
   'if (err) { rj(err); } else { rs(res); }' +
   '}'
-);
+  );
 function denodeifyWithCount(fn, argumentCount) {
   var args = [];
   for (var i = 0; i < argumentCount; i++) {
     args.push('a' + i);
   }
   var body = [
-    'return function (' + args.join(',') + ') {',
-    'var self = this;',
-    'return new Promise(function (rs, rj) {',
-    'var res = fn.call(',
-    ['self'].concat(args).concat([callbackFn]).join(','),
-    ');',
-    'if (res &&',
-    '(typeof res === "object" || typeof res === "function") &&',
-    'typeof res.then === "function"',
-    ') {rs(res);}',
-    '});',
-    '};'
+  'return function (' + args.join(',') + ') {',
+  'var self = this;',
+  'return new Promise(function (rs, rj) {',
+  'var res = fn.call(',
+  ['self'].concat(args).concat([callbackFn]).join(','),
+  ');',
+  'if (res &&',
+  '(typeof res === "object" || typeof res === "function") &&',
+  'typeof res.then === "function"',
+  ') {rs(res);}',
+  '});',
+  '};'
   ].join('');
   return Function(['Promise', 'fn'], body)(Promise, fn);
 }
@@ -3765,218 +3765,218 @@ function denodeifyWithoutCount(fn) {
     args.push('a' + i);
   }
   var body = [
-    'return function (' + args.join(',') + ') {',
-    'var self = this;',
-    'var args;',
-    'var argLength = arguments.length;',
-    'if (arguments.length > ' + fnLength + ') {',
-    'args = new Array(arguments.length + 1);',
-    'for (var i = 0; i < arguments.length; i++) {',
-    'args[i] = arguments[i];',
-    '}',
-    '}',
-    'return new Promise(function (rs, rj) {',
-    'var cb = ' + callbackFn + ';',
-    'var res;',
-    'switch (argLength) {',
-    args.concat(['extra']).map(function (_, index) {
-      return (
-        'case ' + (index) + ':' +
-        'res = fn.call(' + ['self'].concat(args.slice(0, index)).concat('cb').join(',') + ');' +
-        'break;'
+  'return function (' + args.join(',') + ') {',
+  'var self = this;',
+  'var args;',
+  'var argLength = arguments.length;',
+  'if (arguments.length > ' + fnLength + ') {',
+  'args = new Array(arguments.length + 1);',
+  'for (var i = 0; i < arguments.length; i++) {',
+  'args[i] = arguments[i];',
+  '}',
+  '}',
+  'return new Promise(function (rs, rj) {',
+  'var cb = ' + callbackFn + ';',
+  'var res;',
+  'switch (argLength) {',
+  args.concat(['extra']).map(function (_, index) {
+    return (
+      'case ' + (index) + ':' +
+      'res = fn.call(' + ['self'].concat(args.slice(0, index)).concat('cb').join(',') + ');' +
+      'break;'
       );
-    }).join(''),
-    'default:',
-    'args[argLength] = cb;',
-    'res = fn.apply(self, args);',
-    '}',
-    
-    'if (res &&',
-    '(typeof res === "object" || typeof res === "function") &&',
-    'typeof res.then === "function"',
-    ') {rs(res);}',
-    '});',
-    '};'
+  }).join(''),
+  'default:',
+  'args[argLength] = cb;',
+  'res = fn.apply(self, args);',
+  '}',
+
+  'if (res &&',
+  '(typeof res === "object" || typeof res === "function") &&',
+  'typeof res.then === "function"',
+  ') {rs(res);}',
+  '});',
+  '};'
   ].join('');
 
   return Function(
     ['Promise', 'fn'],
     body
-  )(Promise, fn);
-}
+    )(Promise, fn);
+  }
 
-Promise.nodeify = function (fn) {
-  return function () {
-    var args = Array.prototype.slice.call(arguments);
-    var callback =
+  Promise.nodeify = function (fn) {
+    return function () {
+      var args = Array.prototype.slice.call(arguments);
+      var callback =
       typeof args[args.length - 1] === 'function' ? args.pop() : null;
-    var ctx = this;
-    try {
-      return fn.apply(this, arguments).nodeify(callback, ctx);
-    } catch (ex) {
-      if (callback === null || typeof callback == 'undefined') {
-        return new Promise(function (resolve, reject) {
-          reject(ex);
-        });
-      } else {
-        asap(function () {
-          callback.call(ctx, ex);
-        })
+      var ctx = this;
+      try {
+        return fn.apply(this, arguments).nodeify(callback, ctx);
+      } catch (ex) {
+        if (callback === null || typeof callback == 'undefined') {
+          return new Promise(function (resolve, reject) {
+            reject(ex);
+          });
+        } else {
+          asap(function () {
+            callback.call(ctx, ex);
+          })
+        }
       }
     }
   }
-}
 
-Promise.prototype.nodeify = function (callback, ctx) {
-  if (typeof callback != 'function') return this;
+  Promise.prototype.nodeify = function (callback, ctx) {
+    if (typeof callback != 'function') return this;
 
-  this.then(function (value) {
-    asap(function () {
-      callback.call(ctx, null, value);
+    this.then(function (value) {
+      asap(function () {
+        callback.call(ctx, null, value);
+      });
+    }, function (err) {
+      asap(function () {
+        callback.call(ctx, err);
+      });
     });
-  }, function (err) {
-    asap(function () {
-      callback.call(ctx, err);
-    });
-  });
-}
+  }
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/node-extensions.js","/../node_modules/promise/lib")
 },{"./core.js":29,"1YiZ5S":27,"asap":1,"buffer":22}],35:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var Promise = require('./core.js');
+    var Promise = require('./core.js');
 
-module.exports = Promise;
-Promise.enableSynchronous = function () {
-  Promise.prototype.isPending = function() {
-    return this.getState() == 0;
-  };
+    module.exports = Promise;
+    Promise.enableSynchronous = function () {
+      Promise.prototype.isPending = function() {
+        return this.getState() == 0;
+      };
 
-  Promise.prototype.isFulfilled = function() {
-    return this.getState() == 1;
-  };
+      Promise.prototype.isFulfilled = function() {
+        return this.getState() == 1;
+      };
 
-  Promise.prototype.isRejected = function() {
-    return this.getState() == 2;
-  };
+      Promise.prototype.isRejected = function() {
+        return this.getState() == 2;
+      };
 
-  Promise.prototype.getValue = function () {
-    if (this._81 === 3) {
-      return this._65.getValue();
-    }
+      Promise.prototype.getValue = function () {
+        if (this._81 === 3) {
+          return this._65.getValue();
+        }
 
-    if (!this.isFulfilled()) {
-      throw new Error('Cannot get a value of an unfulfilled promise.');
-    }
+        if (!this.isFulfilled()) {
+          throw new Error('Cannot get a value of an unfulfilled promise.');
+        }
 
-    return this._65;
-  };
+        return this._65;
+      };
 
-  Promise.prototype.getReason = function () {
-    if (this._81 === 3) {
-      return this._65.getReason();
-    }
+      Promise.prototype.getReason = function () {
+        if (this._81 === 3) {
+          return this._65.getReason();
+        }
 
-    if (!this.isRejected()) {
-      throw new Error('Cannot get a rejection reason of a non-rejected promise.');
-    }
+        if (!this.isRejected()) {
+          throw new Error('Cannot get a rejection reason of a non-rejected promise.');
+        }
 
-    return this._65;
-  };
+        return this._65;
+      };
 
-  Promise.prototype.getState = function () {
-    if (this._81 === 3) {
-      return this._65.getState();
-    }
-    if (this._81 === -1 || this._81 === -2) {
-      return 0;
-    }
+      Promise.prototype.getState = function () {
+        if (this._81 === 3) {
+          return this._65.getState();
+        }
+        if (this._81 === -1 || this._81 === -2) {
+          return 0;
+        }
 
-    return this._81;
-  };
-};
+        return this._81;
+      };
+    };
 
-Promise.disableSynchronous = function() {
-  Promise.prototype.isPending = undefined;
-  Promise.prototype.isFulfilled = undefined;
-  Promise.prototype.isRejected = undefined;
-  Promise.prototype.getValue = undefined;
-  Promise.prototype.getReason = undefined;
-  Promise.prototype.getState = undefined;
-};
+    Promise.disableSynchronous = function() {
+      Promise.prototype.isPending = undefined;
+      Promise.prototype.isFulfilled = undefined;
+      Promise.prototype.isRejected = undefined;
+      Promise.prototype.getValue = undefined;
+      Promise.prototype.getReason = undefined;
+      Promise.prototype.getState = undefined;
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/synchronous.js","/../node_modules/promise/lib")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/promise/lib/synchronous.js","/../node_modules/promise/lib")
 },{"./core.js":29,"1YiZ5S":27,"buffer":22}],36:[function(require,module,exports){
-module.exports={
-  "name": "clarifai",
-  "version": "2.1.4-dev",
-  "description": "Official Clarifai Javascript SDK",
-  "main": "dist/index.js",
-  "repository": "https://github.com/Clarifai/clarifai-javascript",
-  "author": "Clarifai Inc.",
-  "license": "Apache-2.0",
-  "scripts": {
-    "jsdoc": "jsdoc src/* -t node_modules/minami -d docs/$npm_package_version && jsdoc src/* -t node_modules/minami -d docs/latest"
-  },
-  "dependencies": {
-    "axios": "0.11.1",
-    "form-data": "0.2.0",
-    "promise": "7.1.1"
-  },
-  "devDependencies": {
-    "babel-eslint": "^6.1.2",
-    "babel-preset-es2015": "^6.14.0",
-    "babel-register": "^6.14.0",
-    "babelify": "^7.3.0",
-    "del": "2.0.2",
-    "envify": "3.4.0",
-    "git-branch": "0.3.0",
-    "gulp": "3.9.0",
-    "gulp-awspublish": "3.0.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-browserify": "0.5.1",
-    "gulp-concat": "2.6.0",
-    "gulp-eslint": "2.0.0",
-    "gulp-if": "2.0.0",
-    "gulp-insert": "0.5.0",
-    "gulp-jasmine": "^2.2.1",
-    "gulp-notify": "2.2.0",
-    "gulp-rename": "1.2.2",
-    "gulp-replace-task": "0.11.0",
-    "gulp-uglify": "1.4.1",
-    "gulp-util": "3.0.6",
-    "jsdoc": "^3.4.1",
-    "minami": "^1.1.1",
-    "require-dir": "0.3.0",
-    "serve-static": "1.10.0"
+  module.exports={
+    "name": "clarifai",
+    "version": "2.1.4-dev",
+    "description": "Official Clarifai Javascript SDK",
+    "main": "dist/index.js",
+    "repository": "https://github.com/Clarifai/clarifai-javascript",
+    "author": "Clarifai Inc.",
+    "license": "Apache-2.0",
+    "scripts": {
+      "jsdoc": "jsdoc src/* -t node_modules/minami -d docs/$npm_package_version && jsdoc src/* -t node_modules/minami -d docs/latest"
+    },
+    "dependencies": {
+      "axios": "0.11.1",
+      "form-data": "0.2.0",
+      "promise": "7.1.1"
+    },
+    "devDependencies": {
+      "babel-eslint": "^6.1.2",
+      "babel-preset-es2015": "^6.14.0",
+      "babel-register": "^6.14.0",
+      "babelify": "^7.3.0",
+      "del": "2.0.2",
+      "envify": "3.4.0",
+      "git-branch": "0.3.0",
+      "gulp": "3.9.0",
+      "gulp-awspublish": "3.0.1",
+      "gulp-babel": "^6.1.2",
+      "gulp-browserify": "0.5.1",
+      "gulp-concat": "2.6.0",
+      "gulp-eslint": "2.0.0",
+      "gulp-if": "2.0.0",
+      "gulp-insert": "0.5.0",
+      "gulp-jasmine": "^2.2.1",
+      "gulp-notify": "2.2.0",
+      "gulp-rename": "1.2.2",
+      "gulp-replace-task": "0.11.0",
+      "gulp-uglify": "1.4.1",
+      "gulp-util": "3.0.6",
+      "jsdoc": "^3.4.1",
+      "minami": "^1.1.1",
+      "require-dir": "0.3.0",
+      "serve-static": "1.10.0"
+    }
   }
-}
 
 },{}],37:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
-var Promise = require('promise');
+    var axios = require('axios');
+    var Promise = require('promise');
 
-var _require = require('./helpers'),
+    var _require = require('./helpers'),
     checkType = _require.checkType;
 
-var Models = require('./Models');
-var Inputs = require('./Inputs');
-var Concepts = require('./Concepts');
+    var Models = require('./Models');
+    var Inputs = require('./Inputs');
+    var Concepts = require('./Concepts');
 
-var _require2 = require('./constants'),
+    var _require2 = require('./constants'),
     API = _require2.API,
     ERRORS = _require2.ERRORS;
 
-var TOKEN_PATH = API.TOKEN_PATH;
+    var TOKEN_PATH = API.TOKEN_PATH;
 
 /**
 * top-level class that allows access to models, inputs and concepts
@@ -4108,10 +4108,10 @@ module.exports = App;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/App.js","/")
 },{"./Concepts":39,"./Inputs":41,"./Models":43,"./constants":44,"./helpers":46,"1YiZ5S":27,"axios":4,"buffer":22,"promise":28}],38:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-"use strict";
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    "use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
 * class representing a concept and its info
@@ -4135,29 +4135,29 @@ module.exports = Concept;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Concept.js","/")
 },{"1YiZ5S":27,"buffer":22}],39:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
-var Concept = require('./Concept');
+    var axios = require('axios');
+    var Concept = require('./Concept');
 
-var _require = require('./constants'),
+    var _require = require('./constants'),
     API = _require.API,
     replaceVars = _require.replaceVars;
 
-var CONCEPTS_PATH = API.CONCEPTS_PATH,
+    var CONCEPTS_PATH = API.CONCEPTS_PATH,
     CONCEPT_PATH = API.CONCEPT_PATH,
     CONCEPT_SEARCH_PATH = API.CONCEPT_SEARCH_PATH;
 
-var _require2 = require('./utils'),
+    var _require2 = require('./utils'),
     wrapToken = _require2.wrapToken,
     formatConcept = _require2.formatConcept;
 
-var _require3 = require('./helpers'),
+    var _require3 = require('./helpers'),
     isSuccess = _require3.isSuccess,
     checkType = _require3.checkType;
 
@@ -4316,20 +4316,20 @@ module.exports = Concepts;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Concepts.js","/")
 },{"./Concept":38,"./constants":44,"./helpers":46,"./utils":47,"1YiZ5S":27,"axios":4,"buffer":22}],40:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
-var Concepts = require('./Concepts');
+    var axios = require('axios');
+    var Concepts = require('./Concepts');
 
-var _require = require('./constants'),
+    var _require = require('./constants'),
     API = _require.API;
 
-var INPUTS_PATH = API.INPUTS_PATH;
+    var INPUTS_PATH = API.INPUTS_PATH;
 
 /**
 * class representing an input
@@ -4442,34 +4442,34 @@ module.exports = Input;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Input.js","/")
 },{"./Concepts":39,"./constants":44,"1YiZ5S":27,"axios":4,"buffer":22}],41:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
-var Input = require('./Input');
+    var axios = require('axios');
+    var Input = require('./Input');
 
-var _require = require('./constants'),
+    var _require = require('./constants'),
     API = _require.API,
     ERRORS = _require.ERRORS,
     MAX_BATCH_SIZE = _require.MAX_BATCH_SIZE,
     replaceVars = _require.replaceVars;
 
-var INPUT_PATH = API.INPUT_PATH,
+    var INPUT_PATH = API.INPUT_PATH,
     INPUTS_PATH = API.INPUTS_PATH,
     INPUTS_STATUS_PATH = API.INPUTS_STATUS_PATH,
     SEARCH_PATH = API.SEARCH_PATH;
 
-var _require2 = require('./utils'),
+    var _require2 = require('./utils'),
     wrapToken = _require2.wrapToken,
     formatInput = _require2.formatInput,
     formatImagesSearch = _require2.formatImagesSearch,
     formatConceptsSearch = _require2.formatConceptsSearch;
 
-var _require3 = require('./helpers'),
+    var _require3 = require('./helpers'),
     isSuccess = _require3.isSuccess,
     checkType = _require3.checkType,
     clone = _require3.clone;
@@ -4480,7 +4480,7 @@ var _require3 = require('./helpers'),
  */
 
 
-var Inputs = function () {
+ var Inputs = function () {
   function Inputs(_config) {
     var _this = this;
 
@@ -4842,36 +4842,36 @@ module.exports = Inputs;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Inputs.js","/")
 },{"./Input":40,"./constants":44,"./helpers":46,"./utils":47,"1YiZ5S":27,"axios":4,"buffer":22}],42:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
+    var axios = require('axios');
 
-var _require = require('./helpers'),
+    var _require = require('./helpers'),
     isSuccess = _require.isSuccess,
     checkType = _require.checkType,
     clone = _require.clone;
 
-var _require2 = require('./constants'),
+    var _require2 = require('./constants'),
     API = _require2.API,
     SYNC_TIMEOUT = _require2.SYNC_TIMEOUT,
     replaceVars = _require2.replaceVars,
     STATUS = _require2.STATUS,
     POLLTIME = _require2.POLLTIME;
 
-var MODEL_QUEUED_FOR_TRAINING = STATUS.MODEL_QUEUED_FOR_TRAINING,
+    var MODEL_QUEUED_FOR_TRAINING = STATUS.MODEL_QUEUED_FOR_TRAINING,
     MODEL_TRAINING = STATUS.MODEL_TRAINING;
 
-var _require3 = require('./utils'),
+    var _require3 = require('./utils'),
     wrapToken = _require3.wrapToken,
     formatImagePredict = _require3.formatImagePredict,
     formatModel = _require3.formatModel;
 
-var MODEL_VERSIONS_PATH = API.MODEL_VERSIONS_PATH,
+    var MODEL_VERSIONS_PATH = API.MODEL_VERSIONS_PATH,
     MODEL_VERSION_PATH = API.MODEL_VERSION_PATH,
     MODELS_PATH = API.MODELS_PATH,
     PREDICT_PATH = API.PREDICT_PATH,
@@ -5175,33 +5175,33 @@ module.exports = Model;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Model.js","/")
 },{"./constants":44,"./helpers":46,"./utils":47,"1YiZ5S":27,"axios":4,"buffer":22}],43:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var axios = require('axios');
-var Promise = require('promise');
-var Model = require('./Model');
-var Concepts = require('./Concepts');
+    var axios = require('axios');
+    var Promise = require('promise');
+    var Model = require('./Model');
+    var Concepts = require('./Concepts');
 
-var _require = require('./constants'),
+    var _require = require('./constants'),
     API = _require.API,
     ERRORS = _require.ERRORS,
     replaceVars = _require.replaceVars;
 
-var _require2 = require('./helpers'),
+    var _require2 = require('./helpers'),
     isSuccess = _require2.isSuccess,
     checkType = _require2.checkType,
     clone = _require2.clone;
 
-var _require3 = require('./utils'),
+    var _require3 = require('./utils'),
     wrapToken = _require3.wrapToken,
     formatModel = _require3.formatModel;
 
-var MODELS_PATH = API.MODELS_PATH,
+    var MODELS_PATH = API.MODELS_PATH,
     MODEL_PATH = API.MODEL_PATH,
     MODEL_SEARCH_PATH = API.MODEL_SEARCH_PATH,
     MODEL_VERSION_PATH = API.MODEL_VERSION_PATH;
@@ -5282,7 +5282,7 @@ var Models = function () {
      * @return {Promise(response, error)} A Promise that is fulfilled with the API response or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'predict',
     value: function predict(model, inputs) {
       var _this3 = this;
@@ -5304,7 +5304,7 @@ var Models = function () {
      * @return {Promise(Model, error)} A Promise that is fulfilled with a Model instance or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'train',
     value: function train(model) {
       var _this4 = this;
@@ -5328,7 +5328,7 @@ var Models = function () {
      * @return {Promise(response, error)} A Promise that is fulfilled with the API response or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'getVersion',
     value: function getVersion(model, versionId) {
       var _this5 = this;
@@ -5394,7 +5394,7 @@ var Models = function () {
      * @return {Promise(Models, error)} A Promise that is fulfilled with an instance of Models or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'list',
     value: function list() {
       var _this8 = this;
@@ -5429,7 +5429,7 @@ var Models = function () {
      * @return {Promise(Model, error)} A Promise that is fulfilled with an instance of Model or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'create',
     value: function create(model) {
       var _this9 = this;
@@ -5481,7 +5481,7 @@ var Models = function () {
      * @return {Promise(Model, error)} A Promise that is fulfilled with an instance of Model or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'get',
     value: function get(id) {
       var _this10 = this;
@@ -5592,14 +5592,14 @@ var Models = function () {
      * @return {Promise(response, error)} A Promise that is fulfilled with the API response or rejected with an error
      */
 
-  }, {
+   }, {
     key: 'delete',
     value: function _delete(ids) {
       var versionId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       var request = void 0,
-          url = void 0,
-          data = void 0;
+      url = void 0,
+      data = void 0;
       var id = ids;
 
       if (checkType(/String/, ids) || checkType(/Array/, ids) && ids.length === 1) {
@@ -5689,52 +5689,52 @@ module.exports = Models;
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/Models.js","/")
 },{"./Concepts":39,"./Model":42,"./constants":44,"./helpers":46,"./utils":47,"1YiZ5S":27,"axios":4,"buffer":22,"promise":28}],44:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var MAX_BATCH_SIZE = 128;
-var GEO_LIMIT_TYPES = ['withinMiles', 'withinKilometers', 'withinRadians', 'withinDegrees'];
-var URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i;
-var SYNC_TIMEOUT = 60000;
-var MODEL_QUEUED_FOR_TRAINING = '21103';
-var MODEL_TRAINING = '21101';
-var POLLTIME = 2000;
+    var MAX_BATCH_SIZE = 128;
+    var GEO_LIMIT_TYPES = ['withinMiles', 'withinKilometers', 'withinRadians', 'withinDegrees'];
+    var URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i;
+    var SYNC_TIMEOUT = 60000;
+    var MODEL_QUEUED_FOR_TRAINING = '21103';
+    var MODEL_TRAINING = '21101';
+    var POLLTIME = 2000;
 
-module.exports = {
-  API: {
-    TOKEN_PATH: '/v2/token',
-    MODELS_PATH: '/v2/models',
-    MODEL_PATH: '/v2/models/$0',
-    MODEL_VERSIONS_PATH: '/v2/models/$0/versions',
-    MODEL_VERSION_PATH: '/v2/models/$0/versions/$1',
-    MODEL_PATCH_PATH: '/v2/models/$0/output_info/data/concepts',
-    MODEL_OUTPUT_PATH: '/v2/models/$0/output_info',
-    MODEL_SEARCH_PATH: '/v2/models/searches',
-    PREDICT_PATH: '/v2/models/$0/outputs',
-    VERSION_PREDICT_PATH: '/v2/models/$0/versions/$1/outputs',
-    CONCEPTS_PATH: '/v2/concepts',
-    CONCEPT_PATH: '/v2/concepts/$0',
-    CONCEPT_SEARCH_PATH: '/v2/concepts/searches',
-    MODEL_INPUTS_PATH: '/v2/models/$0/inputs',
-    MODEL_VERSION_INPUTS_PATH: '/v2/models/$0/versions/$1/inputs',
-    INPUTS_PATH: '/v2/inputs',
-    INPUT_PATH: '/v2/inputs/$0',
-    INPUTS_STATUS_PATH: '/v2/inputs/status',
-    SEARCH_PATH: '/v2/searches'
-  },
-  ERRORS: {
-    paramsRequired: function paramsRequired(param) {
-      var paramList = Array.isArray(param) ? param : [param];
-      return new Error('The following ' + (paramList.length > 1 ? 'params are' : 'param is') + ' required: ' + paramList.join(', '));
-    },
-    MAX_INPUTS: new Error('Number of inputs passed exceeded max of ' + MAX_BATCH_SIZE),
-    INVALID_GEOLIMIT_TYPE: new Error('Incorrect geo_limit type. Value must be any of the following: ' + GEO_LIMIT_TYPES.join(', ')),
-    INVALID_DELETE_ARGS: new Error('Wrong arguments passed. You can only delete all models (provide no arguments), delete select models (provide list of ids),\n    delete a single model (providing a single id) or delete a model version (provide a single id and version id)')
-  },
-  STATUS: {
-    MODEL_QUEUED_FOR_TRAINING: MODEL_QUEUED_FOR_TRAINING,
-    MODEL_TRAINING: MODEL_TRAINING
-  },
+    module.exports = {
+      API: {
+        TOKEN_PATH: '/v2/token',
+        MODELS_PATH: '/v2/models',
+        MODEL_PATH: '/v2/models/$0',
+        MODEL_VERSIONS_PATH: '/v2/models/$0/versions',
+        MODEL_VERSION_PATH: '/v2/models/$0/versions/$1',
+        MODEL_PATCH_PATH: '/v2/models/$0/output_info/data/concepts',
+        MODEL_OUTPUT_PATH: '/v2/models/$0/output_info',
+        MODEL_SEARCH_PATH: '/v2/models/searches',
+        PREDICT_PATH: '/v2/models/$0/outputs',
+        VERSION_PREDICT_PATH: '/v2/models/$0/versions/$1/outputs',
+        CONCEPTS_PATH: '/v2/concepts',
+        CONCEPT_PATH: '/v2/concepts/$0',
+        CONCEPT_SEARCH_PATH: '/v2/concepts/searches',
+        MODEL_INPUTS_PATH: '/v2/models/$0/inputs',
+        MODEL_VERSION_INPUTS_PATH: '/v2/models/$0/versions/$1/inputs',
+        INPUTS_PATH: '/v2/inputs',
+        INPUT_PATH: '/v2/inputs/$0',
+        INPUTS_STATUS_PATH: '/v2/inputs/status',
+        SEARCH_PATH: '/v2/searches'
+      },
+      ERRORS: {
+        paramsRequired: function paramsRequired(param) {
+          var paramList = Array.isArray(param) ? param : [param];
+          return new Error('The following ' + (paramList.length > 1 ? 'params are' : 'param is') + ' required: ' + paramList.join(', '));
+        },
+        MAX_INPUTS: new Error('Number of inputs passed exceeded max of ' + MAX_BATCH_SIZE),
+        INVALID_GEOLIMIT_TYPE: new Error('Incorrect geo_limit type. Value must be any of the following: ' + GEO_LIMIT_TYPES.join(', ')),
+        INVALID_DELETE_ARGS: new Error('Wrong arguments passed. You can only delete all models (provide no arguments), delete select models (provide list of ids),\n    delete a single model (providing a single id) or delete a model version (provide a single id and version id)')
+      },
+      STATUS: {
+        MODEL_QUEUED_FOR_TRAINING: MODEL_QUEUED_FOR_TRAINING,
+        MODEL_TRAINING: MODEL_TRAINING
+      },
   // var replacement must be given in order
   replaceVars: function replaceVars(path) {
     var vars = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -5757,255 +5757,255 @@ module.exports = {
 
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/constants.js","/")
 },{"1YiZ5S":27,"buffer":22}],45:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var App = require('./App');
+    var App = require('./App');
 
-var _require = require('./../package.json'),
+    var _require = require('./../package.json'),
     version = _require.version;
 
-module.exports = global.Clarifai = {
-  version: version,
-  App: App,
-  GENERAL_MODEL: 'aaa03c23b3724a16a56b629203edc62c',
-  FOOD_MODEL: 'bd367be194cf45149e75f01d59f77ba7',
-  TRAVEL_MODEL: 'eee28c313d69466f836ab83287a54ed9',
-  NSFW_MODEL: 'e9576d86d2004ed1a38ba0cf39ecb4b1',
-  WEDDINGS_MODEL: 'c386b7a870114f4a87477c0824499348',
-  COLOR_MODEL: 'eeed0b6733a644cea07cf4c60f87ebb7',
-  CLUSTER_MODEL: 'cccbe437d6e54e2bb911c6aa292fb072',
-  FACE_DETECT_MODEL: 'a403429f2ddf4b49b307e318f00e528b',
-  BLUR: 'ddd9d34872ab32be9f0e3b2b98a87be2'
-};
+    module.exports = global.Clarifai = {
+      version: version,
+      App: App,
+      GENERAL_MODEL: 'aaa03c23b3724a16a56b629203edc62c',
+      FOOD_MODEL: 'bd367be194cf45149e75f01d59f77ba7',
+      TRAVEL_MODEL: 'eee28c313d69466f836ab83287a54ed9',
+      NSFW_MODEL: 'e9576d86d2004ed1a38ba0cf39ecb4b1',
+      WEDDINGS_MODEL: 'c386b7a870114f4a87477c0824499348',
+      COLOR_MODEL: 'eeed0b6733a644cea07cf4c60f87ebb7',
+      CLUSTER_MODEL: 'cccbe437d6e54e2bb911c6aa292fb072',
+      FACE_DETECT_MODEL: 'a403429f2ddf4b49b307e318f00e528b',
+      BLUR: 'ddd9d34872ab32be9f0e3b2b98a87be2'
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_3cd037d.js","/")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_3cd037d.js","/")
 },{"./../package.json":36,"./App":37,"1YiZ5S":27,"buffer":22}],46:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var SUCCESS_CODES = [200, 201];
+    var SUCCESS_CODES = [200, 201];
 
-module.exports = {
-  isSuccess: function isSuccess(response) {
-    return SUCCESS_CODES.indexOf(response.status) > -1;
-  },
-  deleteEmpty: function deleteEmpty(obj) {
-    var strict = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    module.exports = {
+      isSuccess: function isSuccess(response) {
+        return SUCCESS_CODES.indexOf(response.status) > -1;
+      },
+      deleteEmpty: function deleteEmpty(obj) {
+        var strict = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-    Object.keys(obj).forEach(function (key) {
-      if (obj[key] === null || obj[key] === undefined || strict === true && (obj[key] === '' || obj[key].length === 0 || Object.keys(obj[key]).length === 0)) {
-        delete obj[key];
+        Object.keys(obj).forEach(function (key) {
+          if (obj[key] === null || obj[key] === undefined || strict === true && (obj[key] === '' || obj[key].length === 0 || Object.keys(obj[key]).length === 0)) {
+            delete obj[key];
+          }
+        });
+      },
+      clone: function clone(obj) {
+        var keys = Object.keys(obj);
+        var copy = {};
+        keys.forEach(function (k) {
+          copy[k] = obj[k];
+        });
+        return copy;
+      },
+      checkType: function checkType(regex, val) {
+        if (regex instanceof RegExp === false) {
+          regex = new RegExp(regex);
+        }
+        return regex.test(Object.prototype.toString.call(val));
       }
-    });
-  },
-  clone: function clone(obj) {
-    var keys = Object.keys(obj);
-    var copy = {};
-    keys.forEach(function (k) {
-      copy[k] = obj[k];
-    });
-    return copy;
-  },
-  checkType: function checkType(regex, val) {
-    if (regex instanceof RegExp === false) {
-      regex = new RegExp(regex);
-    }
-    return regex.test(Object.prototype.toString.call(val));
-  }
-};
+    };
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/helpers.js","/")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/helpers.js","/")
 },{"1YiZ5S":27,"buffer":22}],47:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
+  (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+    'use strict';
 
-var Promise = require('promise');
+    var Promise = require('promise');
 
-var _require = require('./constants'),
+    var _require = require('./constants'),
     URL_REGEX = _require.URL_REGEX,
     GEO_LIMIT_TYPES = _require.GEO_LIMIT_TYPES,
     ERRORS = _require.ERRORS;
 
-var _require2 = require('./helpers'),
+    var _require2 = require('./helpers'),
     checkType = _require2.checkType,
     clone = _require2.clone;
 
-var _require3 = require('./../package.json'),
+    var _require3 = require('./../package.json'),
     VERSION = _require3.version;
 
-module.exports = {
-  wrapToken: function wrapToken(_config, requestFn) {
-    return new Promise(function (resolve, reject) {
-      _config.token().then(function (token) {
-        var headers = {
-          Authorization: 'Bearer ' + token.accessToken,
-          'X-Clarifai-Client': 'js:' + VERSION
-        };
-        requestFn(headers).then(resolve, reject);
-      }, reject);
-    });
-  },
-  formatModel: function formatModel() {
-    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    module.exports = {
+      wrapToken: function wrapToken(_config, requestFn) {
+        return new Promise(function (resolve, reject) {
+          _config.token().then(function (token) {
+            var headers = {
+              Authorization: 'Bearer ' + token.accessToken,
+              'X-Clarifai-Client': 'js:' + VERSION
+            };
+            requestFn(headers).then(resolve, reject);
+          }, reject);
+        });
+      },
+      formatModel: function formatModel() {
+        var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    var formatted = {};
-    if (data.id === null || data.id === undefined) {
-      throw ERRORS.paramsRequired('Model ID');
-    }
-    formatted.id = data.id;
-    if (data.name) {
-      formatted.name = data.name;
-    }
-    formatted.output_info = {};
-    if (data.conceptsMutuallyExclusive !== undefined) {
-      formatted.output_info.output_config = formatted.output_info.output_config || {};
-      formatted.output_info.output_config.concepts_mutually_exclusive = !!data.conceptsMutuallyExclusive;
-    }
-    if (data.closedEnvironment !== undefined) {
-      formatted.output_info.output_config = formatted.output_info.output_config || {};
-      formatted.output_info.output_config.closed_environment = !!data.closedEnvironment;
-    }
-    if (data.concepts) {
-      formatted.output_info.data = {
-        concepts: data.concepts.map(module.exports.formatConcept)
-      };
-    }
-    return formatted;
-  },
-  formatInput: function formatInput(data, includeImage) {
-    var input = checkType(/String/, data) ? { url: data } : data;
-    var formatted = {
-      id: input.id || null,
-      data: {}
-    };
-    if (input.concepts) {
-      formatted.data.concepts = input.concepts;
-    }
-    if (input.metadata) {
-      formatted.data.metadata = input.metadata;
-    }
-    if (input.geo) {
-      formatted.data.geo = { geo_point: input.geo };
-    }
-    if (includeImage !== false) {
-      formatted.data.image = {
-        url: input.url,
-        base64: input.base64,
-        crop: input.crop
-      };
-      if (data.allowDuplicateUrl) {
-        formatted.data.image.allow_duplicate_url = true;
-      }
-    }
-    return formatted;
-  },
-  formatImagePredict: function formatImagePredict(data) {
-    var image = data;
-    if (checkType(/String/, data)) {
-      if (URL_REGEX.test(image) === true) {
-        image = {
-          url: data
-        };
-      } else {
-        image = {
-          base64: data
-        };
-      }
-    }
-    return {
-      data: {
-        image: image
-      }
-    };
-  },
-  formatImagesSearch: function formatImagesSearch(image) {
-    var imageQuery = void 0;
-    var input = { 'input': { 'data': {} } };
-    var formatted = [];
-    if (checkType(/String/, image)) {
-      imageQuery = { 'url': image };
-    } else {
-      imageQuery = image.url || image.base64 ? {
-        image: {
-          url: image.url,
-          base64: image.base64,
-          crop: image.crop
+        var formatted = {};
+        if (data.id === null || data.id === undefined) {
+          throw ERRORS.paramsRequired('Model ID');
         }
-      } : {};
-    }
-
-    input.input.data = imageQuery;
-    if (image.id) {
-      input.input.id = image.id;
-    }
-    if (image.metadata !== undefined) {
-      input.input.data.metadata = image.metadata;
-    }
-    if (image.geo !== undefined) {
-      if (checkType(/Array/, image.geo)) {
-        input.input.data.geo = {
-          geo_box: image.geo.map(function (p) {
-            return { geo_point: p };
-          })
-        };
-      } else if (checkType(/Object/, image.geo)) {
-        if (GEO_LIMIT_TYPES.indexOf(image.geo.type) === -1) {
-          throw ERRORS.INVALID_GEOLIMIT_TYPE;
+        formatted.id = data.id;
+        if (data.name) {
+          formatted.name = data.name;
         }
-        input.input.data.geo = {
-          geo_point: {
-            latitude: image.geo.latitude,
-            longitude: image.geo.longitude
-          },
-          geo_limit: {
-            type: image.geo.type,
-            value: image.geo.value
+        formatted.output_info = {};
+        if (data.conceptsMutuallyExclusive !== undefined) {
+          formatted.output_info.output_config = formatted.output_info.output_config || {};
+          formatted.output_info.output_config.concepts_mutually_exclusive = !!data.conceptsMutuallyExclusive;
+        }
+        if (data.closedEnvironment !== undefined) {
+          formatted.output_info.output_config = formatted.output_info.output_config || {};
+          formatted.output_info.output_config.closed_environment = !!data.closedEnvironment;
+        }
+        if (data.concepts) {
+          formatted.output_info.data = {
+            concepts: data.concepts.map(module.exports.formatConcept)
+          };
+        }
+        return formatted;
+      },
+      formatInput: function formatInput(data, includeImage) {
+        var input = checkType(/String/, data) ? { url: data } : data;
+        var formatted = {
+          id: input.id || null,
+          data: {}
+        };
+        if (input.concepts) {
+          formatted.data.concepts = input.concepts;
+        }
+        if (input.metadata) {
+          formatted.data.metadata = input.metadata;
+        }
+        if (input.geo) {
+          formatted.data.geo = { geo_point: input.geo };
+        }
+        if (includeImage !== false) {
+          formatted.data.image = {
+            url: input.url,
+            base64: input.base64,
+            crop: input.crop
+          };
+          if (data.allowDuplicateUrl) {
+            formatted.data.image.allow_duplicate_url = true;
+          }
+        }
+        return formatted;
+      },
+      formatImagePredict: function formatImagePredict(data) {
+        var image = data;
+        if (checkType(/String/, data)) {
+          if (URL_REGEX.test(image) === true) {
+            image = {
+              url: data
+            };
+          } else {
+            image = {
+              base64: data
+            };
+          }
+        }
+        return {
+          data: {
+            image: image
           }
         };
-      }
-    }
-    if (image.type !== 'input' && input.input.data.image) {
-      if (input.input.data.metadata || input.input.data.geo) {
-        var dataCopy = { input: { data: clone(input.input.data) } };
-        var imageCopy = { input: { data: clone(input.input.data) } };
-        delete dataCopy.input.data.image;
-        delete imageCopy.input.data.metadata;
-        delete imageCopy.input.data.geo;
-        input = [{ output: imageCopy }, dataCopy];
-      } else {
-        input = [{ output: input }];
-      }
-    }
-    formatted = formatted.concat(input);
-    return formatted;
-  },
-  formatConcept: function formatConcept(concept) {
-    var formatted = concept;
-    if (checkType(/String/, concept)) {
-      formatted = {
-        id: concept
-      };
-    }
-    return formatted;
-  },
-  formatConceptsSearch: function formatConceptsSearch(query) {
-    if (checkType(/String/, query)) {
-      query = { id: query };
-    }
-    var v = {};
-    var type = query.type === 'input' ? 'input' : 'output';
-    delete query.type;
-    v[type] = {
-      data: {
-        concepts: [query]
+      },
+      formatImagesSearch: function formatImagesSearch(image) {
+        var imageQuery = void 0;
+        var input = { 'input': { 'data': {} } };
+        var formatted = [];
+        if (checkType(/String/, image)) {
+          imageQuery = { 'url': image };
+        } else {
+          imageQuery = image.url || image.base64 ? {
+            image: {
+              url: image.url,
+              base64: image.base64,
+              crop: image.crop
+            }
+          } : {};
+        }
+
+        input.input.data = imageQuery;
+        if (image.id) {
+          input.input.id = image.id;
+        }
+        if (image.metadata !== undefined) {
+          input.input.data.metadata = image.metadata;
+        }
+        if (image.geo !== undefined) {
+          if (checkType(/Array/, image.geo)) {
+            input.input.data.geo = {
+              geo_box: image.geo.map(function (p) {
+                return { geo_point: p };
+              })
+            };
+          } else if (checkType(/Object/, image.geo)) {
+            if (GEO_LIMIT_TYPES.indexOf(image.geo.type) === -1) {
+              throw ERRORS.INVALID_GEOLIMIT_TYPE;
+            }
+            input.input.data.geo = {
+              geo_point: {
+                latitude: image.geo.latitude,
+                longitude: image.geo.longitude
+              },
+              geo_limit: {
+                type: image.geo.type,
+                value: image.geo.value
+              }
+            };
+          }
+        }
+        if (image.type !== 'input' && input.input.data.image) {
+          if (input.input.data.metadata || input.input.data.geo) {
+            var dataCopy = { input: { data: clone(input.input.data) } };
+            var imageCopy = { input: { data: clone(input.input.data) } };
+            delete dataCopy.input.data.image;
+            delete imageCopy.input.data.metadata;
+            delete imageCopy.input.data.geo;
+            input = [{ output: imageCopy }, dataCopy];
+          } else {
+            input = [{ output: input }];
+          }
+        }
+        formatted = formatted.concat(input);
+        return formatted;
+      },
+      formatConcept: function formatConcept(concept) {
+        var formatted = concept;
+        if (checkType(/String/, concept)) {
+          formatted = {
+            id: concept
+          };
+        }
+        return formatted;
+      },
+      formatConceptsSearch: function formatConceptsSearch(query) {
+        if (checkType(/String/, query)) {
+          query = { id: query };
+        }
+        var v = {};
+        var type = query.type === 'input' ? 'input' : 'output';
+        delete query.type;
+        v[type] = {
+          data: {
+            concepts: [query]
+          }
+        };
+        return v;
       }
     };
-    return v;
-  }
-};
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/utils.js","/")
+  }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/utils.js","/")
 },{"./../package.json":36,"./constants":44,"./helpers":46,"1YiZ5S":27,"buffer":22,"promise":28}]},{},[45])
 
 
@@ -6040,90 +6040,66 @@ module.exports = {
 
 
 
-    var app = new Clarifai.App(
-      'Xq1nRePp4LvQspume-aSEqJieEoolAi2emDrmxZ6',
-      'l0MQqDT-_qkjefid88hHBAQCSNUckkIcuGtCDG6r'
-      );
+var app = new Clarifai.App(
+  'Xq1nRePp4LvQspume-aSEqJieEoolAi2emDrmxZ6',
+  'l0MQqDT-_qkjefid88hHBAQCSNUckkIcuGtCDG6r'
+  );
 
 
     //Queries the Clarifi API
     function imageChecker(imageURL, callBackFunction){
 
-
-      // The minimum number of call backs that must have allready trigged before calling the primary call back function  
-      var requiredCountRetrived = 1;
-
-      // the count of responses recived, this should remain zero.
-      var countOfResponsesRecived = 0;
       // Placeholder to hold the response as it is contructued
       var responseContructor = ({ "Version": 0.1  });
 
 
       app.models.predict("e9576d86d2004ed1a38ba0cf39ecb4b1", imageURL).then(
 
-        function(response) {
+        function(response){
 
           responseContructor =  
 
-        ({
+          ({
 
 
-        "SFW":   reformatResponse(response)   ,
-        responseContructor        
+            "SFW":   reformatResponse(response)
+                    
 
-        });
+          });
 
-          //reformatResponse(response);
+          callBackFunction(responseContructor);
 
-          countOfResponsesRecived++;
-          //Ensure that the last function to return only runs the call back
-          if(countOfResponsesRecived > requiredCountRetrived){
-            
-            console.log("A");
-            callBackFunction(responseContructor);
-
-          }
-
-
-         
         },
 
-        function(err) {
+      function(err) {
 
       // I will  put an error reporting system in here!
 
-        }
-      );
+    }
+    );
+    }
 
 
-    app.models.predict("aaa03c23b3724a16a56b629203edc62c", imageURL).then(
-    
-    function(response) {
 
-      var tmpResponse = ({ "Cuteness": 0.7 ,  "InherentEvil": 0.994 }) ;
+
+    function getImageTag(imageURL, callBackFunction){
+
+      app.models.predict("aaa03c23b3724a16a56b629203edc62c", imageURL).then(
+
+        function(response) {
+
+      // var tmpResponse = ({ "Cuteness": 0.7 ,  "InherentEvil": 0.994 }) ;
 
       responseContructor = 
 
-        ({
+      ({
 
-        "Tokens": tmpResponse  ,
-        responseContructor
+        "Tokens": extractTags(response) 
 
-        });
-
-
-       // reformatResponse(response));
+      });
 
 
-      countOfResponsesRecived++
-      //Ensure that the last function to return only runs the call back
-      if(countOfResponsesRecived > requiredCountRetrived){
-
-        console.log("B");
-        callBackFunction(responseContructor);
-
-      }
-
+      callBackFunction(responseContructor);
 
 
     },
@@ -6131,14 +6107,25 @@ module.exports = {
       // there was an error
     }
 
-  );
-
-
-
-
+    );
 
 
     }
+
+
+
+
+
+
+    function extractTags(response){
+
+      concepts = response['outputs'][0]['data']['concepts'];
+
+      return concepts;
+
+    }
+
+
 
     // Reformat the reponse to a far reduced simpler set
     // [URL,SafeFactor]
@@ -6170,6 +6157,6 @@ module.exports = {
 
 
 
-
+//TEST
 
 
