@@ -1,18 +1,21 @@
 
 
 // Only hardcoded list values work offline
+var testTags = ["boo", "balls"]
 var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
-var bannedStuff = ["kinks"];
 var filterG = true;
 var filterN = true;
 var filterS = true;
 
 function checkTag(inputTag) {
+    var unblock = true;
+    var warning = null;
     if (filterG) {
             for (i = 0; i < bannedGore.length; i++) {
                 if (inputTag.toLowerCase() == bannedGore[i]) {
-                    inputTag = "Caution, this image may contain gore or violent imagery";
+                    unblock = false;
+                    warning = "Caution! This image may contain graphic or gorey content.";
                 }
             }
     }
@@ -20,22 +23,20 @@ function checkTag(inputTag) {
     if (filterN) {
             for (i = 0; i < bannedExplicit.length; i++) {
                 if (inputTag.toLowerCase() == bannedExplicit[i]) {
-                    inputTag = "Caution, this image may contain explicit images";
+                    unblock = false;
+                    warning = "Caution! This image may contain nudity.";
                 }
             }
     }
 
     if (filterS) {
-            for (i = 0; i < bannedStuff.length; i++) {
-                if (inputTag.toLowerCase() == bannedStuff[i]) {
-                    inputTag = "Caution, this image may contain stuff";
-                }
-            }
+        // Use silly images
     }
 
     // Add to a list of Tags contained in the image, and return the Tag list - DO LATER
-    console.log(inputTag); // Used for testing - Remove later
-    return inputTag;
+    console.log(inputTag + " " + unblock); // Used for testing - Remove later
+    console.log(warning);
+    return unblock, warning;
 }
 
 // 1 for Gore, 2 for Explicit, 3 for Stuff [CURRENTLY UNUSED]
@@ -54,25 +55,33 @@ function setFilters(filterNum) {
 
 }
 
-function addBanned(inputTag, bannedList) {
-    for (i = 0; i < bannedList.length; i++) {
-        if (inputTag == bannedList[i]) {
-            bannedList.push(inputTag);
-        }
+function parseImage(imageURL) {
+    var dataToTransmit = 'siteurl=' + imageURL;
+
+		$.ajax({
+			url: "/ajax/registervote", // Put in the URL for the server
+			type: "POST",
+			data: dataToTransmit,
+			cache: false,
+			success: function(returnedData) {
+
+				var receivedJSON = JSON.parse(returnedData);
+                var rating = receivedJSON; // Change array index to get rating int
+                var tags = receivedJSON; // Change array index to get tags array
+                if (rating < 0.4) {
+                    for (var t in tags) {
+                        checkTag(t);
+                    }
+                }
+
+			}
+        });
+}
+
+function checkTest() {
+    for (var i = 0; i < testTags.length; i++) {
+        checkTag(testTags[i]);
     }
-}
-
-function getBanned(bannedList) {
-    return bannedList;
-}
-
-
-function saveBanned() {
-    // Saves the banned Tags list to the JSON file again
-}
-
-function parseImage(url) {
-
 }
 
 function main() {
@@ -90,11 +99,11 @@ function main() {
 
     // Testing the functions with certain Tags
     //console.log("All tags " + bannedTags);
-    console.log(bannedExplicit);
-    console.log(bannedGore);
+    //console.log(bannedExplicit);
+    //console.log(bannedGore);
     checkTag("sausage");
     checkTag("sword");
-    checkTag("thingy - unbanned");
+    checkTest();
 }
 
 main();
