@@ -16,6 +16,7 @@ function checkTag(inputTag) {
                 if (inputTag.toLowerCase() == bannedGore[i]) {
                     unblock = false;
                     warning = "Caution! This image may contain graphic or gorey content.";
+                    break;
                 }
             }
     }
@@ -25,6 +26,7 @@ function checkTag(inputTag) {
                 if (inputTag.toLowerCase() == bannedExplicit[i]) {
                     unblock = false;
                     warning = "Caution! This image may contain nudity.";
+                    break;
                 }
             }
     }
@@ -70,12 +72,17 @@ function parseImage(imageURL) {
                 var tags = receivedJSON; // Change array index to get tags array
                 if (rating < 0.4) {
                     for (var t in tags) {
-                        checkTag(t);
+                        var returnVals = checkTag(t);
+                        var unblock = returnVals[0];
+                        var warning = returnVals[1];
                     }
                 }
 
 			}
         });
+    // Returns the JSON object, whether it should be unblocked or not (false for an explicit image)
+    // Lastly it returns the warning, if any
+    return receivedJSON, unblock, warning;
 }
 
 function checkTest() {
