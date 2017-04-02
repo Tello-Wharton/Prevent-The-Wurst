@@ -44,9 +44,15 @@ function watch(target){
       var images = target.querySelectorAll(pagesConfig.imageClass);
       for (var x = 0; x < images.length; x++){
         if(images[x].getAttribute("state") !== "tracked"){
-          console.log(images[x]);
+          //console.log(images[x]);
+          images[x].realImage = images[x].style.backgroundImage;
           images[x].style.backgroundImage = 'url("https://raw.githubusercontent.com/Tello-Wharton/Prevent-The-Wurst/master/circle.png")';
-          images[x].setAttribute("state","tracked")
+          images[x].setAttribute("state","tracked");
+
+          var imageURL = images[x].realImage.match(/"([^"]+)"/)[1];
+          
+          console.log(images[x].realImage);
+          console.log(imageURL);
         }
       }
 
