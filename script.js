@@ -56,17 +56,14 @@ function watch(target){
           console.log(imageURL);
 
           images[x].innerHTML = '<div class="clickable" onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
-          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>penis penis</div>";
+          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + returnTags(JSONARRAYHERE); + "</div>";
 
           $(images[x].parentNode.parentNode).css("pointer-events","none");
           $(images[x].parentNode).css("pointer-events","none");
           $(images[x]).css("pointer-events","none");
           $(images[x]).children().css("pointer-events", "all");
 
-          //$(images[x]).css("position", "relative");
-          //$(images[x]).css("vertical-align", "middle");
-          //$(images[x]).click(function(){ console.log("cake"); });
-
+          // Get this function below to check if it needs to be unblocked
           var cake = parseImage(imageURL);
           console.log(cake);
 
@@ -87,6 +84,11 @@ function watch(target){
 
 
 // Only hardcoded list values work offline
+
+function returnTags(tagArray) {
+    var tagString = JSON.stringify(tagArray);
+    return tagString;
+}
 
 var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
