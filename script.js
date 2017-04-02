@@ -62,9 +62,10 @@ function watch(target){
           $(images[x].parentNode).css("pointer-events","none");
           $(images[x]).css("pointer-events","none");
           $(images[x]).children().css("pointer-events", "all");
-          console.log(images[x]);
+
           //$(images[x]).click(function(){ console.log("cake"); });
-          console.log("plz");
+
+          parseImage(imageURL);
 
         }
       }
@@ -147,17 +148,17 @@ function parseImage(imageURL) {
 			cache: false,
 			success: function(returnedData) {
 
-				var receivedJSON = JSON.parse(returnedData);
-                var rating = receivedJSON; // Change array index to get rating int
-                var tags = receivedJSON; // Change array index to get tags array
-                if (rating < 0.4) {
-                    for (var t in tags) {
-                        checkTag(t);
-                    }
-                }
+			     var receivedJSON = JSON.parse(returnedData);
+           var rating = receivedJSON; // Change array index to get rating int
+           var tags = receivedJSON; // Change array index to get tags array
+           if (rating < 0.4) {
+             for (var t in tags) {
+               checkTag(t);
+             }
+           }
 
-			}
-        });
+         }
+       });
 }
 
 function checkTest() {
