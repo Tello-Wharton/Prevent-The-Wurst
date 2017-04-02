@@ -93,12 +93,13 @@ var filterS = true;
 
 function checkTag(inputTag) {
     var unblock = true;
-    var warning = null;
+    var warning = "";
     if (filterG) {
             for (i = 0; i < bannedGore.length; i++) {
                 if (inputTag.toLowerCase() == bannedGore[i]) {
                     unblock = false;
                     warning = "Caution! This image may contain graphic or gorey content.";
+                    break;
                 }
             }
     }
@@ -108,6 +109,7 @@ function checkTag(inputTag) {
                 if (inputTag.toLowerCase() == bannedExplicit[i]) {
                     unblock = false;
                     warning = "Caution! This image may contain nudity.";
+                    break;
                 }
             }
     }
@@ -148,17 +150,22 @@ function parseImage(imageURL) {
 			cache: false,
 			success: function(returnedData) {
 
-			     var receivedJSON = JSON.parse(returnedData);
-           var rating = receivedJSON; // Change array index to get rating int
-           var tags = receivedJSON; // Change array index to get tags array
-           if (rating < 0.4) {
-             for (var t in tags) {
-               checkTag(t);
-             }
-           }
+				var receivedJSON = JSON.parse(returnedData);
+                var rating = receivedJSON; // Change array index to get rating int
+                var tags = receivedJSON; // Change array index to get tags array
+                if (rating < 0.4) {
+                    for (var t in tags) {
+                        var returnVals = checkTag(t);
+                        var unblock = returnVals[0];
+                        var warning = returnVals[1];
+                    }
+                }
 
-         }
-       });
+			}
+        });
+    // Returns the JSON object, whether it should be unblocked or not (false for an explicit image)
+    // Lastly it returns the warning, if any
+    return receivedJSON, unblock, warning;
 }
 
 function checkTest() {
