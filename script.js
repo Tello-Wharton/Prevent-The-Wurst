@@ -10,7 +10,7 @@ var filterS = true;
 
 function checkTag(inputTag) {
     var unblock = true;
-    var warning = null;
+    var warning = "";
     if (filterG) {
             for (i = 0; i < bannedGore.length; i++) {
                 if (inputTag.toLowerCase() == bannedGore[i]) {
