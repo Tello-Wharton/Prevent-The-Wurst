@@ -6367,7 +6367,7 @@ function callBackFunction2(JSONResponse, image) {
     tokens = JSONResponse["Tokens"];
 
     if(checkAllTags(tokens) === false){
-      removeCover2(image);
+      //removeCover2(image);
     }
 
     //image.innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + JSONResponse["SFW"]["SafeFactor"] + "</div>";
