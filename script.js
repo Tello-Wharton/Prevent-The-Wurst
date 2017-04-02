@@ -65,7 +65,8 @@ function watch(target){
 
           //$(images[x]).click(function(){ console.log("cake"); });
 
-          parseImage(imageURL);
+          var cake = parseImage(imageURL);
+          console.log(cake);
 
         }
       }
@@ -142,7 +143,12 @@ function setFilters(filterNum) {
 
 function parseImage(imageURL) {
     var dataToTransmit = 'siteurl=' + imageURL;
+    var receivedJSON;
+    var unblock;
+    var warning;
 
+    console.log(dataToTransmit);
+    
 		$.ajax({
 			url: "/ajax/registervote", // Put in the URL for the server
 			type: "POST",
@@ -150,14 +156,14 @@ function parseImage(imageURL) {
 			cache: false,
 			success: function(returnedData) {
 
-				var receivedJSON = JSON.parse(returnedData);
+				receivedJSON = JSON.parse(returnedData);
                 var rating = receivedJSON; // Change array index to get rating int
                 var tags = receivedJSON; // Change array index to get tags array
                 if (rating < 0.4) {
                     for (var t in tags) {
                         var returnVals = checkTag(t);
-                        var unblock = returnVals[0];
-                        var warning = returnVals[1];
+                        unblock = returnVals[0];
+                        warning = returnVals[1];
                     }
                 }
 
@@ -165,7 +171,7 @@ function parseImage(imageURL) {
         });
     // Returns the JSON object, whether it should be unblocked or not (false for an explicit image)
     // Lastly it returns the warning, if any
-    return receivedJSON, unblock, warning;
+    return {"receivedJSON" : receivedJSON, "unblock" : unblock, "warning" : warning};
 }
 
 function checkTest() {
