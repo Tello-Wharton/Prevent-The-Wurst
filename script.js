@@ -194,6 +194,12 @@ function closeBox(obj, event){
   console.log("close");
 
   event.stopPropagation();
+  removeCover(obj);
+
+  return true;
+}
+
+function removeCover(obj){
   obj.parentNode.style.backgroundImage = obj.parentNode.realImage;
   obj.parentNode.setAttribute("state","tracked");
 
@@ -204,5 +210,4 @@ function closeBox(obj, event){
   console.log("guess who");
 
   obj.parentNode.innerHTML = '';
-  return true;
 }
