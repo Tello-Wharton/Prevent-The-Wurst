@@ -6054,7 +6054,7 @@ var app = new Clarifai.App(
 
 
     //Queries the Clarifi API
-    function imageChecker(imageURL, callBackFunction){
+    function imageChecker(imageURL, callBackFunction, image){
 
       // Placeholder to hold the response as it is contructued
       var responseContructor = ({ "Version": 0.1  });
@@ -6074,7 +6074,7 @@ var app = new Clarifai.App(
 
           });
 
-          callBackFunction(responseContructor);
+          callBackFunction(responseContructor, image);
 
         },
 
@@ -6231,11 +6231,11 @@ function watch(target){
           console.log(images[x].realImage);
           console.log(imageURL);
           // ParseImage gets the tags and the safety rating back
-          var tags = parseImage(imageURL)[0];
-          var safetyRating = parseImage(imageURL)[1];
+          console.log(parseImage(imageURL, images[x] ));
+          //var safetyRating = parseImage(imageURL)[1];
 
           images[x].innerHTML = '<div class="clickable" onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
-          images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + formatTags(tags, safetyRating) + "</div>";
+          //images[x].innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + formatTags("cake", "2"); + "</div>";
 
           // Check tags here and unblock if needed
 
@@ -6332,16 +6332,21 @@ function setFilters(filterNum) {
 
 }
 
-function parseImage(imageURL) {
-    safetyRating = imageChecker(imageURL, callBackFunction);
+function parseImage(imageURL, image) {
+    safetyRating = imageChecker(imageURL, callBackFunction, image);
+
+
     tags = getImageTag(imageURL, callBackFunction);
-    console.log(JSON.stringify(safetyRating));
-    console.log(JSON.stringify(tags));
+    console.log("TAGS: " + JSON.stringify(tags));
     return tags, safetyRating;
 }
 
-function callBackFunction(JSONResponse) {
+function callBackFunction(JSONResponse, image) {
     returnSafety(JSONResponse);
+
+    image.innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + JSONResponse["SFW"]["SafeFactor"] + "</div>";
+
+
     returnTags(JSONResponse);
 
 }
