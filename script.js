@@ -6089,7 +6089,7 @@ var app = new Clarifai.App(
 
 
 
-    function getImageTag(imageURL, callBackFunction){
+    function getImageTag(imageURL, callBackFunction, image){
 
       app.models.predict("aaa03c23b3724a16a56b629203edc62c", imageURL).then(
 
@@ -6106,7 +6106,7 @@ var app = new Clarifai.App(
       });
 
 
-      callBackFunction(responseContructor);
+      callBackFunction(responseContructor, image);
 
 
     },
@@ -6277,16 +6277,17 @@ function formatTags(tagString, safetyDec) {
     return formattedString;
 }
 
-var bannedExplicit = ["sausage", "balls", "melon"];
+var bannedExplicit = ["sausage", "balls", "melon", "raddish"];
 var bannedGore = ["blood", "gun", "sword"];
 var filterG = true;
 var filterN = true;
+var filterS = true;
 
 function checkAllTags(array) {
 
     blockImage = false;
-    for (i = 0; i < array.length; i++) {
-        if (checkTag(array[i]["name"]) == false){
+    for (var i = 0; i < array.length; i++) {
+        if (checkTag(array[i]["name"]) === false){
             blockImage = true;
             break;
         }
@@ -6317,10 +6318,14 @@ function checkTag(inputTag) {
             }
     }
 
+    if (filterS) {
+        // Use silly images
+    }
 
     // Add to a list of Tags contained in the image, and return the Tag list - DO LATER
+    console.log(inputTag + " " + unblock); // Used for testing - Remove later
     console.log(warning);
-    return unblock;
+    return unblock, warning;
 }
 
 // 1 for Gore, 2 for Explicit, 3 for Stuff [CURRENTLY UNUSED]
@@ -6343,7 +6348,7 @@ function parseImage(imageURL, image) {
     safetyRating = imageChecker(imageURL, callBackFunction, image);
 
 
-    tags = getImageTag(imageURL, callBackFunction);
+    tags = getImageTag(imageURL, callBackFunction2, image);
     console.log("TAGS: " + JSON.stringify(tags));
     return tags, safetyRating;
 }
@@ -6357,6 +6362,21 @@ function callBackFunction(JSONResponse, image) {
     returnTags(JSONResponse);
 
 }
+
+function callBackFunction2(JSONResponse, image) {
+    tokens = JSONResponse["Tokens"];
+
+    if(checkAllTags(tokens) === false){
+      removeCover2(image);
+    }
+
+    //image.innerHTML+= "<div style='textAlign: center; display: inline-block; position: relative; top: 50%; transform: translateY(-50%);'>" + JSONResponse["SFW"]["SafeFactor"] + "</div>";
+
+
+    returnTags(JSONResponse);
+
+}
+
 
 function checkTest() {
     for (var i = 0; i < testTags.length; i++) {
@@ -6385,4 +6405,18 @@ function removeCover(obj){
   console.log("guess who");
 
   obj.parentNode.innerHTML = '';
+}
+
+
+function removeCover2(obj){
+  obj.style.backgroundImage = obj.parentNode.realImage;
+  obj.setAttribute("state","tracked");
+
+
+  $(obj.parentNode).css("pointer-events","all");
+  $(obj).css("pointer-events","all");
+  //$(images[x]).click(function(){ console.log("cake"); });
+  console.log("guess who");
+
+  obj.innerHTML = '';
 }
