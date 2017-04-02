@@ -54,6 +54,17 @@ function watch(target){
 
           console.log(images[x].realImage);
           console.log(imageURL);
+
+          images[x].innerHTML = '<div onclick="return closeBox(this, event);" style="color: #777; font: 14px/100% arial, sans-serif; position: absolute; right: 5px; text-decoration: none; text-shadow: 0 1px 0 #fff; top: 5px; z-index: 20;">X</div>';
+
+          $(images[x].parentNode.parentNode).css("pointer-events","none");
+          $(images[x].parentNode).css("pointer-events","none");
+          $(images[x]).css("pointer-events","none");
+          $(images[x]).children().css("pointer-events", "all");
+          console.log(images[x]);
+          //$(images[x]).click(function(){ console.log("cake"); });
+          console.log("plz");
+
         }
       }
 
@@ -177,3 +188,20 @@ function main() {
 }
 
 main();
+
+function closeBox(obj, event){
+  console.log("close");
+
+  event.stopPropagation();
+  obj.parentNode.style.backgroundImage = obj.parentNode.realImage;
+  obj.parentNode.setAttribute("state","tracked");
+
+
+  $(obj.parentNode.parentNode).css("pointer-events","all");
+  $(obj.parentNode).css("pointer-events","all");
+  //$(images[x]).click(function(){ console.log("cake"); });
+  console.log("guess who");
+
+  obj.parentNode.innerHTML = '';
+  return true;
+}
