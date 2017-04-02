@@ -6335,6 +6335,8 @@ function setFilters(filterNum) {
 function parseImage(imageURL) {
     safetyRating = imageChecker(imageURL, callBackFunction);
     tags = getImageTag(imageURL, callBackFunction);
+    console.log(JSON.stringify(safetyRating));
+    console.log(JSON.stringify(tags));
     return tags, safetyRating;
 }
 
