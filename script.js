@@ -6281,9 +6281,9 @@ var bannedExplicit = ["sausage", "balls", "melon"];
 var bannedGore = ["blood", "gun", "sword"];
 var filterG = true;
 var filterN = true;
-var filterS = true;
 
 function checkAllTags(array) {
+
     blockImage = false;
     for (i = 0; i < array.length; i++) {
         if (checkTag(array[i]["name"]) == false){
@@ -6317,9 +6317,6 @@ function checkTag(inputTag) {
             }
     }
 
-    if (filterS) {
-        // Use silly images
-    }
 
     // Add to a list of Tags contained in the image, and return the Tag list - DO LATER
     console.log(warning);
