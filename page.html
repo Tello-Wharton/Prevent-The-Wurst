@@ -1,0 +1,78 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
+  <script src="ImageCheck.js"></script>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <script>
+
+          
+
+
+    $( document ).ready(function() {
+
+
+      $('#goButt').click(function(){
+
+      //Send the image for checking
+      image1 = $('#textInput1').val();
+
+      imageChecker(image1, setText);
+      getImageTag(image1, setText2);
+
+
+
+
+    });
+
+
+    });  
+
+
+  // A demo call back
+  function setText(jSONResposne){
+
+    $('#result').text("Currant Saftey Factor: " + jSONResposne["SFW"]["SafeFactor"]);
+    console.log("URL Safety:");
+    console.log(JSON.stringify(jSONResposne));
+
+  }
+
+  function setText2(jSONResposne){
+
+    console.log(JSON.stringify(jSONResposne));
+    
+
+  }
+
+
+
+</script>
+
+<title>Example Usage</title>
+</head>
+<body>
+
+  Rapid Test!
+
+
+  <input id="textInput1" type="text" value="https://samples.clarifai.com/metro-north.jpg">
+
+  <button id="goButt" >go</button>
+
+  <p id="result"></p>
+
+</body>
+</html>
+
+
+
+
+
+
+
